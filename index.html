@@ -14,6 +14,33 @@
             align-items: center;
             height: 100vh;
             margin: 0; /* Remove default margin */
+            overflow: hidden; /* Hide overflowing animation */
+        }
+
+        /* Create an animation called 'underwater' */
+        @keyframes underwater {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Apply the animation to the background */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1; /* Place it behind other content */
+            background-image: linear-gradient(180deg, #0000ff 0%, #000066 100%); /* Gradient for underwater effect */
+            animation: underwater 10s ease infinite; /* Apply the animation */
         }
 
         h1 {
@@ -91,7 +118,3 @@
     </script>
 </body>
 </html>
-<!-- Add a link below the page -->
-<div style="margin-top: 20px;">
-    <a href="https://huyaterminator.github.io/clicker" style="color: white;">Visit the Clicker Game (In Development) </a>
-</div>
