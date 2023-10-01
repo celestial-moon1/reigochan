@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ChatGPT Chatbot Test</title>
+    <title>ChatGPT Chatbot</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,6 +31,14 @@
             border-radius: 5px;
         }
 
+        #api-key-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
         #send-button {
             margin-top: 10px;
             padding: 10px 20px;
@@ -45,6 +53,7 @@
 <body>
     <div id="chat-container">
         <h1>ChatGPT Chatbot</h1>
+        <input type="text" id="api-key-input" placeholder="Enter your API key...">
         <div id="chat-box"></div>
         <input type="text" id="message-input" placeholder="Type a message...">
         <button id="send-button">Send</button>
@@ -54,13 +63,17 @@
         const chatBox = document.getElementById('chat-box');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
+        const apiKeyInput = document.getElementById('api-key-input');
 
-        // Replace 'YOUR_API_KEY' with your actual OpenAI API key
-        const apiKey = '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';
+        let apiKey = ''; // Store the API key
+
+        apiKeyInput.addEventListener('input', () => {
+            apiKey = apiKeyInput.value;
+        });
 
         sendButton.addEventListener('click', async () => {
             const message = messageInput.value;
-            if (message.trim() !== '') {
+            if (message.trim() !== '' && apiKey.trim() !== '') {
                 addMessage('You', message);
 
                 const response = await fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
