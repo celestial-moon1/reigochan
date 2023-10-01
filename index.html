@@ -4,6 +4,7 @@
     <title>Thông minh, khoa xuất</title>
     <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Pixelify+Sans&display=swap" rel="stylesheet">
     <style>
+        /* Define the initial state of elements */
         body {
             background-color: black;
             color: white;
@@ -14,12 +15,15 @@
             align-items: center;
             height: 100vh;
             margin: 0; /* Remove default margin */
+            opacity: 0; /* Start with zero opacity */
         }
 
         h1 {
             text-align: center;
             font-family: 'Mochiy Pop One', sans-serif;
             margin-top: 0; /* Add margin to top of the heading to separate it from the images */
+            opacity: 0; /* Start with zero opacity */
+            animation: fadeIn 2s ease-in-out forwards; /* Apply the fade-in animation */
         }
 
         .images-container {
@@ -31,6 +35,8 @@
             width: 50px; /* Adjust the width as needed */
             height: auto;
             margin: 10px; /* Add some spacing around the images */
+            opacity: 0; /* Start with zero opacity */
+            animation: fadeIn 2s ease-in-out forwards; /* Apply the fade-in animation */
         }
 
         ul {
@@ -42,11 +48,23 @@
         li {
             margin: 10px 0;
             font-family: 'Pixelify Sans', sans-serif; /* Apply PixelifySans font */
+            opacity: 0; /* Start with zero opacity */
+            animation: fadeIn 2s ease-in-out forwards; /* Apply the fade-in animation */
         }
 
         a {
             text-decoration: none;
             color: white;
+        }
+
+        /* Define the fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
     </style>
     <!-- Set the website icon -->
@@ -59,9 +77,9 @@
         <img class="image-right" src="server-icon.png" alt="Right Image">
     </div>
     <ul>
-        <li><a href="ms-quick-assist:" style="color: white;">Open Microsoft Quick Assist (First step)</a></li>
-        <li><a href="https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/meth.bat" style="color: white;">Drag this into Quick Assist (Second step)</a></li>
-        <li><a href="https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/cmds2.url" style="color: white;">Drag this into Quick Assist (Last step)</a></li>
+        <li><a href="ms-quick-assist">Open Microsoft Quick Assist (First step)</a></li>
+        <li><a href="https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/meth.bat">Drag this into Quick Assist (Second step)</a></li>
+        <li><a href="https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/cmds2.url">Drag this into Quick Assist (Last step)</a></li>
         <!-- Add more files as needed -->
     </ul>
 </body>
