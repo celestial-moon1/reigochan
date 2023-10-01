@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thông minh, khoa xuất</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0; /* Remove default margin */
+            overflow: hidden; /* Hide overflowing animation */
+            position: relative; /* Make the bubbles absolute to the body */
+        }
+
+        /* Create an animation called 'underwater' */
+        @keyframes underwater {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Create an animation called 'bubble' */
+        @keyframes bubble {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        /* Apply the animation to the background */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1; /* Place it behind other content */
+            background-image: linear-gradient(180deg, #0000ff 0%, #000066 100%); /* Gradient for underwater effect */
+            animation: underwater 10s ease infinite; /* Apply the underwater animation */
+        }
+
+        /* Create bubbles with the animation */
+        .bubble {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: bubble 5s linear infinite;
+        }
+
+        h1 {
+            text-align: center;
+            font-family: 'Mochiy Pop One', sans-serif;
+            margin-top: 0; /* Add margin to the top of the heading to separate it from the images */
+        }
+
+        .images-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .image-left, .image-right {
+            width: 50px; /* Adjust the width as needed */
+            height: auto;
+            margin: 10px; /* Add some spacing around the images */
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        li {
+            margin: 10px 0;
+            font-family: 'Pixelify Sans', sans-serif; /* Apply PixelifySans font */
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        #last-updated {
+            margin-top: 20px;
+            font-size: 12px;
+        }
+    </style>
+    <!-- Set the website icon -->
+    <link rel="icon" href="server-icon.png" type="image/png">
+</head>
+<body>
+<audio autoplay="" src="./background-music.mp3"></audio>
+
+    <h1>Khoa phóng tinh</h1>
+    <div class="images-container">
+        <img class="image-left" src="server-icon.png" alt="Left Image">
+        <img class="image-right" src="server-icon.png" alt="Right Image">
+    </div>
+    <ul>
+    
+        <li><a href="https://drive.google.com/u/4/uc?id=1uHbZVBXwsEZb00Wj3u_hCVkm44VWnFYX&export=download" style="color: white;" title="Keys Download and SMO file">yuzu</a></li>
+        <li><a href="https://drive.google.com/drive/folders/1ZXWUHnDqSnTtUlZL1MrwLR3KoyMttcMw?usp=drive_link" style="color: white;" title="Yuzu files backup">Yuzu Files Backup</a></li>
+        </li>
+    </ul>
+    <!-- Generate random bubbles -->
+    <script>
+        const audio = document.getElementById('background-music.mp3');
+        audio.play(); // Autoplay the audio when the page loads
+
+        function playAudio() {
+            audio.play();
+        }
+
+        function pauseAudio() {
+            audio.pause();
+        }
+    </script>
+</body>
+</html>
