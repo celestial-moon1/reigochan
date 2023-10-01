@@ -15,6 +15,7 @@
             height: 100vh;
             margin: 0; /* Remove default margin */
             overflow: hidden; /* Hide overflowing animation */
+            position: relative; /* Make the bubbles absolute to the body */
         }
 
         /* Create an animation called 'underwater' */
@@ -30,6 +31,18 @@
             }
         }
 
+        /* Create an animation called 'bubble' */
+        @keyframes bubble {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
         /* Apply the animation to the background */
         body::before {
             content: "";
@@ -40,7 +53,17 @@
             bottom: 0;
             z-index: -1; /* Place it behind other content */
             background-image: linear-gradient(180deg, #0000ff 0%, #000066 100%); /* Gradient for underwater effect */
-            animation: underwater 10s ease infinite; /* Apply the animation */
+            animation: underwater 10s ease infinite; /* Apply the underwater animation */
+        }
+
+        /* Create bubbles with the animation */
+        .bubble {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: bubble 5s linear infinite;
         }
 
         h1 {
@@ -102,19 +125,7 @@
     <!-- Display the last updated time and date -->
     <p id="last-updated"></p>
 
+    <!-- Generate random bubbles -->
     <script>
-        // Function to display the current time and date
-        function displayLastUpdated() {
-            const lastUpdatedElement = document.getElementById('last-updated');
-            const now = new Date();
-            const formattedDate = now.toLocaleDateString();
-            const formattedTime = now.toLocaleTimeString();
-            lastUpdatedElement.textContent = `Last Updated: ${formattedDate} at ${formattedTime}`;
-        }
-
-        // Call the function initially and update every minute
-        displayLastUpdated();
-        setInterval(displayLastUpdated, 60000); // Update every minute
-    </script>
-</body>
-</html>
+        function createBubble() {
+            const
