@@ -48,6 +48,11 @@
             text-decoration: none;
             color: white;
         }
+
+        #last-updated {
+            margin-top: 20px;
+            font-size: 12px;
+        }
     </style>
     <!-- Set the website icon -->
     <link rel="icon" href="server-icon.png" type="image/png">
@@ -67,6 +72,23 @@
         </li>
         <!-- Add more files as needed -->
     </ul>
+    <!-- Display the last updated time and date -->
+    <p id="last-updated"></p>
+
+    <script>
+        // Function to display the current time and date
+        function displayLastUpdated() {
+            const lastUpdatedElement = document.getElementById('last-updated');
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString();
+            const formattedTime = now.toLocaleTimeString();
+            lastUpdatedElement.textContent = `Last Updated: ${formattedDate} at ${formattedTime}`;
+        }
+
+        // Call the function initially and update every minute
+        displayLastUpdated();
+        setInterval(displayLastUpdated, 60000); // Update every minute
+    </script>
 </body>
 </html>
 <!-- Add a link below the page -->
