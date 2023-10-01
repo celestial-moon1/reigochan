@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ChatGPT Chatbot</title>
+    <title>ChatGPT Chatbot v1</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,8 +39,20 @@
             margin-top: 10px;
         }
 
-        #status-message {
+        #status-container {
+            display: flex;
+            align-items: center;
             margin-top: 10px;
+        }
+
+        #status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        #status-text {
             font-weight: bold;
         }
 
@@ -59,7 +71,10 @@
     <div id="chat-container">
         <h1>ChatGPT Chatbot</h1>
         <input type="text" id="api-key-input" placeholder="Enter your API key...">
-        <div id="status-message"></div>
+        <div id="status-container">
+            <div id="status-dot"></div>
+            <div id="status-text">Status: </div>
+        </div>
         <div id="chat-box"></div>
         <input type="text" id="message-input" placeholder="Type a message...">
         <button id="send-button">Send</button>
@@ -70,7 +85,8 @@
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
         const apiKeyInput = document.getElementById('api-key-input');
-        const statusMessage = document.getElementById('status-message');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
 
         let apiKey = ''; // Store the API key
 
@@ -90,12 +106,15 @@
                 });
 
                 if (response.ok) {
-                    statusMessage.innerText = 'API Key is valid and connected.';
+                    statusDot.style.backgroundColor = 'green';
+                    statusText.innerText = 'Status: Connected';
                 } else {
-                    statusMessage.innerText = 'API Key is invalid or unable to connect.';
+                    statusDot.style.backgroundColor = 'red';
+                    statusText.innerText = 'Status: Not Connected';
                 }
             } else {
-                statusMessage.innerText = '';
+                statusDot.style.backgroundColor = 'gray';
+                statusText.innerText = 'Status: Enter API Key';
             }
         });
 
