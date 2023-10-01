@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auto-Click Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #game-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #score {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #click-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #leaderboard {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        #leaderboard h2 {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Auto-Click Game</h1>
+        <p id="score">Score: <span id="score-value">0</span></p>
+        <button id="click-button">Click Me</button>
+        <div id="leaderboard">
+            <h2>Leaderboard</h2>
+            <ol id="leaderboard-list"></ol>
+        </div>
+    </div>
+
+    <script>
+        const scoreElement = document.getElementById('score-value');
+        const clickButton = document.getElementById('click-button');
+        const leaderboardList = document.getElementById('leaderboard-list');
+
+        let score = 0;
+        let leaderboard = [];
+
+        // Simulated leaderboard data (replace with real data)
+        leaderboard = [
+            { name: 'Player 1', score: 100 },
+            { name: 'Player 2', score: 85 },
+            { name: 'Player 3', score: 70 },
+        ];
+
+        // Function to update the score and leaderboard
+        function updateGame() {
+            score++;
+            scoreElement.innerText = score;
+        }
+
+        // Event listener for clicking the button
+        clickButton.addEventListener('click', () => {
+            updateGame();
+        });
+
+        // Function to display the leaderboard
+        function displayLeaderboard() {
+            leaderboardList.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const listItem = document.createElement('li');
+                listItem.innerText = `${entry.name}: ${entry.score}`;
+                leaderboardList.appendChild(listItem);
+            });
+        }
+
+        // Initial leaderboard display
+        displayLeaderboard();
+
+        // Simulated new high score (replace with real data)
+        const newHighScore = { name: 'New Player', score: 120 };
+
+        // Simulate adding a new high score
+        leaderboard.push(newHighScore);
+
+        // Sort the leaderboard by score (replace with real sorting logic)
+        leaderboard.sort((a, b) => b.score - a.score);
+
+        // Display the updated leaderboard
+        displayLeaderboard();
+    </script>
+</body>
+</html>
