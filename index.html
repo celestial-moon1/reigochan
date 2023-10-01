@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>File Directory Listing</title>
+    <title>Thông minh, khoa xuất</title>
     <link href="https://fonts.googleapis.com/css?family=Mochiy+Pop+One&display=swap" rel="stylesheet">
     <style>
         body {
@@ -9,20 +9,23 @@
             color: white;
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0; /* Remove default margin */
         }
 
         h1 {
             text-align: center;
             font-family: 'Mochiy Pop One', sans-serif;
+            margin-top: 0; /* Add margin to top of the heading to separate it from the images */
         }
 
         .image-left, .image-right {
             width: 50px; /* Adjust the width as needed */
             height: auto;
-            margin: 0 10px; /* Add some spacing between the images and the heading */
+            margin: 10px; /* Add some spacing around the images */
         }
 
         ul {
@@ -42,8 +45,8 @@
     </style>
 </head>
 <body>
-    <img class="image-left" src="server-icon.png" alt="Left Image">
     <h1>Khoa phóng tinh</h1>
+    <img class="image-left" src="server-icon.png" alt="Left Image">
     <img class="image-right" src="server-icon.png" alt="Right Image">
     <ul>
         <li><a href="ms-quick-assist" style="color: white;">Open Microsoft Quick Assist (First step)</a></li>
