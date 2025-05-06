@@ -1,143 +1,195 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Thông minh, khoa xuất</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleChan</title>
     <style>
         body {
-            background-color: black;
-            color: white;
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0; /* Remove default margin */
-            overflow: hidden; /* Hide overflowing animation */
-            position: relative; /* Make the bubbles absolute to the body */
+            background-color: #eef2ff;
+            margin: 0;
+            padding: 10px;
         }
-
-        /* Create an animation called 'underwater' */
-        @keyframes underwater {
-            0% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-10px);
-            }
-            100% {
-                transform: translateY(0);
-            }
-        }
-
-        /* Create an animation called 'bubble' */
-        @keyframes bubble {
-            0% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100px);
-                opacity: 0;
-            }
-        }
-
-        /* Apply the animation to the background */
-        body::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1; /* Place it behind other content */
-            background-image: linear-gradient(180deg, #0000ff 0%, #000066 100%); /* Gradient for underwater effect */
-            animation: underwater 10s ease infinite; /* Apply the underwater animation */
-        }
-
-        /* Create bubbles with the animation */
-        .bubble {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            animation: bubble 5s linear infinite;
-        }
-
-        h1 {
+        header {
+            background-color: #d6daf0;
+            padding: 10px;
+            margin-bottom: 10px;
             text-align: center;
-            font-family: 'Mochiy Pop One', sans-serif;
-            margin-top: 0; /* Add margin to the top of the heading to separate it from the images */
+            border: 1px solid #b7c5d9;
+            border-radius: 3px;
         }
-
-        .images-container {
-            display: flex;
-            align-items: center;
+        .board-title {
+            font-weight: bold;
+            font-size: 24px;
+            color: #af0a0f;
         }
-
-        .image-left, .image-right {
-            width: 50px; /* Adjust the width as needed */
-            height: auto;
-            margin: 10px; /* Add some spacing around the images */
+        .thread-container {
+            margin-bottom: 20px;
         }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: center;
+        .thread {
+            background-color: #d6daf0;
+            border: 1px solid #b7c5d9;
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 5px;
         }
-
-        li {
-            margin: 10px 0;
-            font-family: 'Pixelify Sans', sans-serif; /* Apply PixelifySans font */
+        .reply {
+            background-color: #f0e0d6;
+            border: 1px solid #d9bfb7;
+            border-radius: 3px;
+            padding: 10px;
+            margin: 5px 0 5px 20px;
         }
-
-        a {
-            text-decoration: none;
-            color: white;
+        .post-info {
+            color: #117743;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
-
-        #last-updated {
-            margin-top: 20px;
-            font-size: 12px;
+        .post-number {
+            color: #000;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        .post-image {
+            float: left;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            max-width: 150px;
+            max-height: 150px;
+        }
+        .post-form {
+            background-color: #d6daf0;
+            border: 1px solid #b7c5d9;
+            border-radius: 3px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .post-form textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+        .clear {
+            clear: both;
+        }
+        .greentext {
+            color: #789922;
+        }
+        input, textarea, button {
+            box-sizing: border-box;
+            border: 1px solid #aaa;
+            border-radius: 3px;
+            padding: 5px;
+        }
+        button {
+            background-color: #f0e0d6;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e0d0c6;
         }
     </style>
-    <!-- Set the website icon -->
-    <link rel="icon" href="server-icon.png" type="image/png">
 </head>
 <body>
-<audio autoplay="" src="./background-music.mp3"></audio>
+    <header>
+        <div class="board-title">/b/ - Random</div>
+        <div class="board-description">The birthplace of memes and random discussion</div>
+    </header>
 
-    <h1>Khoa phóng tinh</h1>
-    <div class="images-container">
-        <img class="image-left" src="server-icon.png" alt="Left Image">
-        <img class="image-right" src="server-icon.png" alt="Right Image">
+    <div class="post-form">
+        <h3>Create a New Thread</h3>
+        <form>
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" id="name" value="Anonymous">
+            </div>
+            <div>
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject">
+            </div>
+            <div>
+                <label for="image">Image:</label>
+                <input type="file" id="image">
+            </div>
+            <div>
+                <textarea id="comment" placeholder="Comment"></textarea>
+            </div>
+            <button type="button">Post Thread</button>
+        </form>
     </div>
-    <ul>
-    
-        <li><a href="ms-quick-assist:" style="color: white;" title="It just opens Microsoft Quick Assist for download exploit.">Open Microsoft Quick Assist (First step)</a></li>
-        <li><a href="https://drive.google.com/u/4/uc?id=1at7S8DKTuTYreJSfEGduBPCalieAS4Ad&export=download" style="color: white;" title="Download meth.bat for installing things for support Unauthorized Apps.">Drag this into Quick Assist (Second step)</a></li>
-        <li>
-            <a href="https://drive.google.com/file/d/1WAjIaKA6B5ZxkOt6YbpLPCLH0_UQGtYO/view?usp=sharing" style="color: white;" title="Download cmds2.url for opening cmd.">Drag this into Quick Assist and open this after all steps (Last step)</a>
-            <p>Nothing</p>
-        <li><a href="indexprivate.html" style="color: white;" title="Yuzu stuff">Private Page</a></li>
-        </li>
-        <!-- https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/meth.bat, https://huggingface.co/datasets/kirito8963/khoabatocomgenow/resolve/main/cmds2.url -->
-    </ul>
-    <!-- Generate random bubbles -->
-    <script>
-        const audio = document.getElementById('background-music.mp3');
-        audio.play(); // Autoplay the audio when the page loads
 
-        function playAudio() {
-            audio.play();
-        }
+    <div class="thread-container">
+        <div class="thread">
+            <div class="post-info">Anonymous <span class="post-number">No.12345678</span> 02/01/23(Thu)15:30:12</div>
+            <img class="post-image" src="https://via.placeholder.com/150" alt="Thread Image">
+            <div class="post-content">
+                <p>Hey /b/, what's the deal with airline food?</p>
+                <p>I mean seriously, what's up with that?</p>
+            </div>
+            <div class="clear"></div>
+            <div class="post-actions">
+                [Reply]
+            </div>
+        </div>
+        
+        <div class="reply">
+            <div class="post-info">Anonymous <span class="post-number">No.12345679</span> 02/01/23(Thu)15:32:45</div>
+            <div class="post-content">
+                <p><span class="greentext">&gt;what's the deal with airline food?</span></p>
+                <p>OK Seinfeld</p>
+            </div>
+        </div>
+        
+        <div class="reply">
+            <div class="post-info">Anonymous <span class="post-number">No.12345680</span> 02/01/23(Thu)15:35:21</div>
+            <img class="post-image" src="https://via.placeholder.com/100" alt="Reply Image">
+            <div class="post-content">
+                <p>It's because at high altitudes your taste buds don't work as well. Also cost-cutting measures.</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="reply">
+            <div class="post-info">Anonymous <span class="post-number">No.12345681</span> 02/01/23(Thu)15:40:05</div>
+            <div class="post-content">
+                <p>I actually like airline food. Come at me.</p>
+            </div>
+        </div>
+    </div>
 
-        function pauseAudio() {
-            audio.pause();
-        }
-    </script>
+    <div class="thread-container">
+        <div class="thread">
+            <div class="post-info">Anonymous <span class="post-number">No.12345682</span> 02/01/23(Thu)14:20:10</div>
+            <img class="post-image" src="https://via.placeholder.com/150" alt="Thread Image">
+            <div class="post-content">
+                <p>Rate my setup</p>
+            </div>
+            <div class="clear"></div>
+            <div class="post-actions">
+                [Reply]
+            </div>
+        </div>
+        
+        <div class="reply">
+            <div class="post-info">Anonymous <span class="post-number">No.12345683</span> 02/01/23(Thu)14:22:33</div>
+            <div class="post-content">
+                <p>2/10 cable management is terrible</p>
+            </div>
+        </div>
+        
+        <div class="reply">
+            <div class="post-info">Anonymous <span class="post-number">No.12345684</span> 02/01/23(Thu)14:25:40</div>
+            <div class="post-content">
+                <p><span class="greentext">&gt;that keyboard</span></p>
+                <p>Are you serious anon?</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>- SimpleChan -</p>
+    </footer>
 </body>
-</html>
+</html> 
