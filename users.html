@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>05chan - User Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet">
+    <style>
+        :root {
+            /* Light theme (default) */
+            --board-green: #0f0c0d;
+            --text-color: #789922;
+            --link-color: #dd0000;
+            --background: #eef2ff;
+            --post-background: #f0e0d6;
+            --border-color: #d9bfb7;
+            --quote-color: #789922;
+            --sage-color: #707070;
+            --header-text: #fff;
+            --input-background: #fff;
+            --input-text: #000;
+        }
+
+        [data-theme="dark"] {
+            --board-green: #1a1a1a;
+            --text-color: #8f9;
+            --link-color: #f55;
+            --background: #1a1a1a;
+            --post-background: #2a2a2a;
+            --border-color: #3a3a3a;
+            --quote-color: #8f9;
+            --sage-color: #888;
+            --header-text: #fff;
+            --input-background: #2a2a2a;
+            --input-text: #fff;
+        }
+
+        body {
+            font-family: "MS Pゴシック", "MS PGothic", "Mona", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", "Meiryo", "ＭＳ Ｐゴシック", sans-serif;
+            background-color: var(--background);
+            color: var(--input-text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.4;
+            font-size: 14px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .board-header {
+            background-color: var(--board-green);
+            color: var(--header-text);
+            padding: 5px;
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 10px;
+        }
+
+        .board-header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: var(--header-text);
+            font-weight: normal;
+        }
+
+        .board-header a {
+            text-decoration: none;
+            color: var(--header-text);
+        }
+
+        .profile-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--post-background);
+            border: 1px solid var(--border-color);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border: 1px solid var(--border-color);
+            margin-right: 20px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin: 0 0 5px 0;
+        }
+
+        .bio {
+            color: var(--input-text);
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background-color: var(--input-background);
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--sage-color);
+        }
+
+        .user-posts {
+            margin-top: 20px;
+        }
+
+        .post {
+            background-color: var(--input-background);
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .post-header {
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: var(--sage-color);
+        }
+
+        .post-content {
+            white-space: pre-wrap;
+        }
+
+        .user-info {
+            display: none;
+            margin-left: 10px;
+            color: var(--header-text);
+        }
+
+        .user-info.visible {
+            display: inline-block;
+        }
+
+        .logout-btn {
+            margin-left: 10px;
+            font-size: 12px;
+            color: var(--link-color);
+            cursor: pointer;
+        }
+
+        .edit-profile-btn {
+            background-color: var(--board-green);
+            color: var(--header-text);
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .edit-profile-btn:hover {
+            background-color: #2a2a2a;
+        }
+    </style>
+</head>
+<body>
+    <div class="board-header">
+        <div class="title">
+            <a href="/">
+                <h1>/05chan/ - User Profile</h1>
+            </a>
+            <span class="user-info" id="userInfo"></span>
+            <span class="logout-btn" id="logoutBtn" style="display: none;">[Logout]</span>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="avatar" id="userAvatar"></div>
+            <div class="profile-info">
+                <h2 class="username" id="username">Loading...</h2>
+                <div class="bio" id="bio"></div>
+                <button class="edit-profile-btn" id="editProfileBtn" style="display: none;">Edit Profile</button>
+            </div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="postCount">0</div>
+                <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="joinDate">-</div>
+                <div class="stat-label">Join Date</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="lastActive">-</div>
+                <div class="stat-label">Last Active</div>
+            </div>
+        </div>
+
+        <div class="user-posts">
+            <h3>Recent Posts</h3>
+            <div id="userPosts"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-analytics.js";
+        import { getDatabase, ref, get, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDalIuZpXzyLSkz9WGDgEHWdWzAZ_heRUU",
+            authDomain: "chan-3079a.firebaseapp.com",
+            projectId: "chan-3079a",
+            storageBucket: "chan-3079a.firebasestorage.app",
+            messagingSenderId: "583844977468",
+            appId: "1:583844977468:web:f62a787653fe9f39c61c39",
+            measurementId: "G-Y2RBNG0TF1",
+            databaseURL: "https://chan-3079a-default-rtdb.asia-southeast1.firebasedatabase.app"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        let currentUser = null;
+        let currentUserData = null;
+        let profileUserId = null;
+
+        // Get user ID from URL
+        function getUserIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('userId');
+        }
+
+        // Load theme preference
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Format message
+        function formatMessage(message) {
+            // Convert URLs to clickable links
+            message = message.replace(
+                /(https?:\/\/[^\s]+)/g,
+                '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+            );
+
+            // Convert quotes (lines starting with >)
+            message = message.replace(
+                /^(&gt;|>)(.*)$/gm,
+                '<span class="quote">$1$2</span>'
+            );
+
+            // Convert greentext (lines starting with >)
+            message = message.replace(
+                /^(&gt;|>)(.*)$/gm,
+                '<span class="greentext">$1$2</span>'
+            );
+
+            // Convert redtext (lines starting with <)
+            message = message.replace(
+                /^(&lt;|<)(.*)$/gm,
+                '<span class="redtext">$1$2</span>'
+            );
+
+            // Convert spoilers
+            message = message.replace(
+                /\[spoiler\](.*?)\[\/spoiler\]/g,
+                '<span class="spoiler">$1</span>'
+            );
+
+            // Convert code blocks
+            message = message.replace(
+                /\[code\](.*?)\[\/code\]/g,
+                '<span class="code">$1</span>'
+            );
+
+            // Convert sage
+            message = message.replace(
+                /sage/g,
+                '<span class="sage">sage</span>'
+            );
+
+            // Convert newlines to <br>
+            message = message.replace(/\n/g, '<br>');
+
+            return message;
+        }
+
+        // Load user data
+        async function loadUserData() {
+            if (!profileUserId) return;
+
+            const userRef = ref(database, `users/${profileUserId}`);
+            const snapshot = await get(userRef);
+            const userData = snapshot.val();
+
+            if (userData) {
+                document.getElementById('username').textContent = userData.username;
+                document.getElementById('bio').textContent = userData.bio || '';
+                if (userData.avatar) {
+                    document.getElementById('userAvatar').style.backgroundImage = `url(${userData.avatar})`;
+                }
+                document.getElementById('joinDate').textContent = new Date(userData.createdAt).toLocaleDateString();
+                document.getElementById('lastActive').textContent = new Date(userData.lastActive || userData.createdAt).toLocaleDateString();
+
+                // Show edit button if viewing own profile
+                if (currentUser && currentUser.uid === profileUserId) {
+                    document.getElementById('editProfileBtn').style.display = 'inline-block';
+                }
+
+                // Load user posts
+                loadUserPosts();
+            } else {
+                document.getElementById('username').textContent = '<deleted>';
+                document.getElementById('bio').textContent = 'This user no longer exists.';
+            }
+        }
+
+        // Load user posts
+        async function loadUserPosts() {
+            const postsRef = ref(database, 'messages');
+            const userPostsQuery = query(postsRef, orderByChild('userId'), limitToLast(10));
+            const snapshot = await get(userPostsQuery);
+            const posts = [];
+            
+            snapshot.forEach((childSnapshot) => {
+                const post = childSnapshot.val();
+                if (post.userId === profileUserId) {
+                    posts.push(post);
+                }
+            });
+
+            // Sort posts by timestamp
+            posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            const postsContainer = document.getElementById('userPosts');
+            postsContainer.innerHTML = '';
+
+            posts.forEach(post => {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post';
+                postDiv.innerHTML = `
+                    <div class="post-header">
+                        ${post.postNumber} - ${new Date(post.timestamp).toLocaleString()}
+                    </div>
+                    <div class="post-content">${formatMessage(post.message)}</div>
+                `;
+                postsContainer.appendChild(postDiv);
+            });
+
+            document.getElementById('postCount').textContent = posts.length;
+        }
+
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = ref(database, `users/${user.uid}`);
+                const snapshot = await get(userRef);
+                const userData = snapshot.val();
+
+                if (userData) {
+                    currentUserData = userData;
+                    document.getElementById('userInfo').textContent = `Logged in as: ${userData.username}`;
+                    document.getElementById('userInfo').classList.add('visible');
+                    document.getElementById('logoutBtn').style.display = 'inline';
+                }
+            }
+        });
+
+        // Edit profile button handler
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            window.location.href = '/profile.html';
+        });
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = '/';
+            } catch (error) {
+                alert('Failed to logout: ' + error.message);
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadTheme();
+            profileUserId = getUserIdFromUrl();
+            if (profileUserId) {
+                loadUserData();
+            } else {
+                window.location.href = '/';
+            }
+        });
+    </script>
+</body>
+</html> 

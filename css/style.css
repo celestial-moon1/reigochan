@@ -1,0 +1,236 @@
+@charset "UTF-8";
+
+/* 4chan-like Theme */
+:root {
+    --bg-color: #0f0c0c;
+    --text-color: #ffffff;
+    --link-color: #00ff00;
+    --border-color: #1a1a1a;
+    --input-bg: #1a1a1a;
+    --input-border: #333333;
+    --thread-bg: #1a1a1a;
+    --quote-color: #789922;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: "Consolas", "Monaco", monospace;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.4;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.board-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title {
+    margin: 0 auto 20px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.title h1 {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.title h1:hover {
+    color: var(--link-color);
+}
+
+.title p {
+    color: #888;
+    font-size: 0.9em;
+    margin: 5px 0 0;
+}
+
+/* Post Form */
+.post-form {
+    background-color: var(--thread-bg);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-control {
+    background-color: var(--input-bg) !important;
+    border: 1px solid var(--input-border) !important;
+    color: var(--text-color) !important;
+    font-family: "Consolas", "Monaco", monospace !important;
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9em;
+}
+
+.form-control:focus {
+    border-color: var(--link-color) !important;
+    box-shadow: none !important;
+    outline: none;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.btn-post {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px 20px;
+    cursor: pointer;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 0.9em;
+}
+
+.btn-post:hover {
+    border-color: var(--link-color);
+    color: var(--link-color);
+}
+
+/* Dropzone */
+.dropzone {
+    border: 2px dashed var(--border-color);
+    background-color: var(--input-bg);
+    height: 100px;
+    position: relative;
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.dropzone:hover {
+    border-color: var(--link-color);
+}
+
+.dropzone.has-image {
+    border-color: var(--link-color);
+    background-color: rgba(0, 255, 0, 0.1);
+}
+
+.dropzone .info {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    color: #888;
+    font-size: 0.9em;
+}
+
+.input {
+    height: 100%;
+    left: 0;
+    outline: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Threads */
+.threads {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.thread {
+    background-color: var(--thread-bg);
+    border: 1px solid var(--border-color);
+    padding: 15px;
+}
+
+.thread-header {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #888;
+}
+
+.post-number {
+    color: var(--link-color);
+    margin-right: 10px;
+}
+
+.thread-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.thread-image {
+    flex-shrink: 0;
+    width: 300px;
+    margin-bottom: 10px;
+}
+
+.thread-image img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.thread-image a {
+    display: block;
+    text-decoration: none;
+}
+
+.thread-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.thread-subject {
+    color: var(--link-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.thread-message {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .thread-content {
+        flex-direction: column;
+    }
+    
+    .thread-image {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto 15px;
+    }
+}
+
+.btn-clear {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: #ff4444;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 0.8em;
+    margin-top: 10px;
+}
+
+.btn-clear:hover {
+    border-color: #ff4444;
+    background-color: rgba(255, 68, 68, 0.1);
+}
