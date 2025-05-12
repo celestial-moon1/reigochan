@@ -383,48 +383,86 @@
             document.getElementById('postCount').textContent = posts.length;
         }
 
+        // URL handling
+        function getBaseUrl() {
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            if (isGitHubPages) {
+                // Extract repo name from the path
+                const pathParts = window.location.pathname.split('/');
+                const repoName = pathParts[1]; // The repo name is the first part of the path
+                return `/${repoName}`;
+            }
+            return ''; // Local development
+        }
+
+        function getPageUrl(page) {
+            return `${getBaseUrl()}/${page}`;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log("Page loaded, initializing...");
+            loadTheme();
+            
+            // Get user ID from URL first
+            profileUserId = getUserIdFromUrl();
+            if (!profileUserId) {
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+            
+            // Update header links
+            const headerTitle = document.querySelector('.board-header .title a');
+            headerTitle.href = getBaseUrl() + '/';
+            
+            // Set up edit profile button click handler
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            if (editProfileBtn) {
+                editProfileBtn.onclick = () => {
+                    window.location.href = getPageUrl('profile.html');
+                };
+            }
+            
+            // Load user data
+            await loadUserData();
+            
+            // Hide loading overlay when everything is ready
+            isPageLoaded = true;
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        });
+
         // Auth state observer
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                const userRef = ref(database, `users/${user.uid}`);
-                const snapshot = await get(userRef);
-                const userData = snapshot.val();
-
-                if (userData) {
-                    currentUserData = userData;
-                    document.getElementById('userInfo').textContent = `Logged in as: ${userData.username}`;
-                    document.getElementById('userInfo').classList.add('visible');
-                    document.getElementById('logoutBtn').style.display = 'inline';
+                document.getElementById('userInfo').textContent = `Logged in as: ${user.email}`;
+                document.getElementById('userInfo').classList.add('visible');
+                document.getElementById('logoutBtn').style.display = 'inline';
+                
+                // Show edit button if viewing own profile
+                if (user.uid === profileUserId) {
+                    document.getElementById('editProfileBtn').style.display = 'inline-block';
                 }
+            } else {
+                document.getElementById('userInfo').classList.remove('visible');
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('editProfileBtn').style.display = 'none';
             }
-        });
-
-        // Edit profile button handler
-        document.getElementById('editProfileBtn').addEventListener('click', () => {
-            window.location.href = '/profile.html';
         });
 
         // Logout handler
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                window.location.href = '/';
+                window.location.href = getBaseUrl() + '/';
             } catch (error) {
                 alert('Failed to logout: ' + error.message);
             }
         });
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadTheme();
-            profileUserId = getUserIdFromUrl();
-            if (profileUserId) {
-                loadUserData();
-            } else {
-                window.location.href = '/';
-            }
-        });
+        // Make functions available globally
+        window.getBaseUrl = getBaseUrl;
+        window.getPageUrl = getPageUrl;
     </script>
 </body>
 </html> 

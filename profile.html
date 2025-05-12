@@ -242,7 +242,7 @@
             <div class="profile-actions">
                 <div>
                     <button type="button" class="btn" onclick="saveProfile()">Save Changes</button>
-                    <button type="button" class="btn" onclick="window.location.href='/'">Cancel</button>
+                    <button type="button" class="btn" onclick="window.location.href=getBaseUrl() + '/'">Cancel</button>
                 </div>
                 <button type="button" class="btn btn-danger" onclick="deleteAccount()">Delete Account</button>
             </div>
@@ -411,7 +411,7 @@
                 });
 
                 alert('Profile updated successfully');
-                window.location.href = '/';
+                window.location.href = getBaseUrl() + '/';
             } catch (error) {
                 alert('Failed to update profile: ' + error.message);
             }
@@ -434,7 +434,7 @@
                 await deleteUser(currentUser);
 
                 alert('Account deleted successfully');
-                window.location.href = '/';
+                window.location.href = getBaseUrl() + '/';
             } catch (error) {
                 alert('Failed to delete account: ' + error.message);
             }
@@ -449,7 +449,7 @@
                 document.getElementById('logoutBtn').style.display = 'inline';
                 await loadUserData();
             } else {
-                window.location.href = '/';
+                window.location.href = getBaseUrl() + '/';
             }
         });
 
@@ -457,7 +457,7 @@
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                window.location.href = '/';
+                window.location.href = getBaseUrl() + '/';
             } catch (error) {
                 alert('Failed to logout: ' + error.message);
             }
