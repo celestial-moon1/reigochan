@@ -386,17 +386,25 @@
         // URL handling
         function getBaseUrl() {
             const isGitHubPages = window.location.hostname.includes('github.io');
+            console.log('Hostname:', window.location.hostname);
+            console.log('Is GitHub Pages:', isGitHubPages);
+            console.log('Full pathname:', window.location.pathname);
+            
             if (isGitHubPages) {
                 // Extract repo name from the path
-                const pathParts = window.location.pathname.split('/');
-                const repoName = pathParts[1]; // The repo name is the first part of the path
+                const pathParts = window.location.pathname.split('/').filter(Boolean);
+                console.log('Path parts:', pathParts);
+                const repoName = pathParts[0]; // The repo name is the first non-empty part
+                console.log('Repo name:', repoName);
                 return `/${repoName}`;
             }
             return ''; // Local development
         }
 
         function getPageUrl(page) {
-            return `${getBaseUrl()}/${page}`;
+            const url = `${getBaseUrl()}/${page}`;
+            console.log('Generated URL:', url);
+            return url;
         }
 
         // Initialize
@@ -413,13 +421,18 @@
             
             // Update header links
             const headerTitle = document.querySelector('.board-header .title a');
-            headerTitle.href = getBaseUrl() + '/';
+            const homeUrl = getBaseUrl() + '/';
+            console.log('Home URL:', homeUrl);
+            headerTitle.href = homeUrl;
             
             // Set up edit profile button click handler
             const editProfileBtn = document.getElementById('editProfileBtn');
             if (editProfileBtn) {
+                const profileUrl = getPageUrl('profile.html');
+                console.log('Profile URL:', profileUrl);
                 editProfileBtn.onclick = () => {
-                    window.location.href = getPageUrl('profile.html');
+                    console.log('Edit profile clicked, navigating to:', profileUrl);
+                    window.location.href = profileUrl;
                 };
             }
             
@@ -441,7 +454,16 @@
                 
                 // Show edit button if viewing own profile
                 if (user.uid === profileUserId) {
-                    document.getElementById('editProfileBtn').style.display = 'inline-block';
+                    const editProfileBtn = document.getElementById('editProfileBtn');
+                    if (editProfileBtn) {
+                        editProfileBtn.style.display = 'inline-block';
+                        const profileUrl = getPageUrl('profile.html');
+                        console.log('Setting edit profile URL:', profileUrl);
+                        editProfileBtn.onclick = () => {
+                            console.log('Edit profile clicked, navigating to:', profileUrl);
+                            window.location.href = profileUrl;
+                        };
+                    }
                 }
             } else {
                 document.getElementById('userInfo').classList.remove('visible');
@@ -454,7 +476,9 @@
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
-                window.location.href = getBaseUrl() + '/';
+                const homeUrl = getBaseUrl() + '/';
+                console.log('Logout clicked, navigating to:', homeUrl);
+                window.location.href = homeUrl;
             } catch (error) {
                 alert('Failed to logout: ' + error.message);
             }
