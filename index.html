@@ -1085,6 +1085,23 @@
             }
         }
 
+        // URL handling
+        function getBaseUrl() {
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            if (isGitHubPages) {
+                // Extract repo name from the path
+                const pathParts = window.location.pathname.split('/');
+                const repoName = pathParts[1]; // The repo name is the first part of the path
+                return `/${repoName}`;
+            }
+            return ''; // Local development
+        }
+
+        function getPageUrl(page) {
+            return `${getBaseUrl()}/${page}`;
+        }
+
+        // Update createThreadElement to use the new URL function
         function createThreadElement(thread) {
             const threadDiv = document.createElement('div');
             threadDiv.className = 'thread';
@@ -1099,7 +1116,7 @@
                 (msg.username || (currentUserData && msg.userId === currentUser.uid ? currentUserData.username : '<deleted>')) : 
                 msg.username;
             const usernameHtml = msg.userId ? 
-                `<a href="/users.html?userId=${msg.userId}" class="username">${username}</a>` : 
+                `<a href="${getPageUrl('users.html')}?userId=${msg.userId}" class="username">${username}</a>` : 
                 `<span class="username">${username}</span>`;
 
             threadDiv.innerHTML = `
@@ -1281,6 +1298,13 @@
             await loadThreads();
             document.getElementById('logoutBtn').addEventListener('click', logout);
             
+            // Update header links
+            const headerTitle = document.querySelector('.board-header .title a');
+            headerTitle.href = getBaseUrl() + '/';
+            
+            const profileBtn = document.getElementById('profileBtn');
+            profileBtn.href = getPageUrl('profile.html');
+            
             // Hide loading overlay when everything is ready
             isPageLoaded = true;
             document.getElementById('loadingOverlay').classList.add('hidden');
@@ -1453,6 +1477,8 @@
         window.loadThreads = loadThreads;
         window.toggleReplyForm = toggleReplyForm;
         window.submitReply = submitReply;
+        window.getBaseUrl = getBaseUrl;
+        window.getPageUrl = getPageUrl;
     </script>
 </body>
 
