@@ -97,9 +97,10 @@
             box-sizing: border-box;
         }
 
-        textarea.form-control {
-            resize: vertical;
-            min-height: 80px;
+        textarea.form-control, input.form-control {
+            background-color: var(--input-background);
+            color: var(--input-text);
+            border: 1px solid var(--border-color);
         }
 
         .dropzone {
@@ -110,7 +111,8 @@
             cursor: pointer;
             margin: 5px 0;
             transition: all 0.3s ease;
-            background-color: #fff;
+            background-color: var(--input-background);
+            color: var(--input-text);
             font-size: 12px;
         }
 
@@ -120,12 +122,12 @@
 
         .dropzone.dragover {
             border-color: var(--text-color);
-            background-color: #f8f8f8;
+            background-color: var(--background);
         }
 
         .dropzone.has-image {
             border-color: var(--text-color);
-            background-color: #f0f8f0;
+            background-color: var(--post-background);
         }
 
         .btn-post, .btn-clear {
@@ -714,6 +716,7 @@
         let userStats = {
             postCount: 0
         };
+        let isRegistering = false;
 
         // Load theme preference
         function loadTheme() {
@@ -730,6 +733,8 @@
 
         // Auth state observer
         onAuthStateChanged(auth, async (user) => {
+            if (isRegistering) return;
+            const accountBtn = document.querySelector('.post-form .btn-post[onclick="showAccountPanel()"]');
             if (user) {
                 const userRef = ref(database, `users/${user.uid}`);
                 const snapshot = await get(userRef);
@@ -742,6 +747,7 @@
                     document.getElementById('userInfo').classList.add('visible');
                     document.getElementById('logoutBtn').style.display = 'inline';
                     document.getElementById('usernameGroup').style.display = 'none';
+                    if (accountBtn) accountBtn.style.display = 'none';
                 } else {
                     // If user data doesn't exist, log them out
                     await signOut(auth);
@@ -753,6 +759,7 @@
                 document.getElementById('userInfo').classList.remove('visible');
                 document.getElementById('logoutBtn').style.display = 'none';
                 document.getElementById('usernameGroup').style.display = 'block';
+                if (accountBtn) accountBtn.style.display = '';
             }
         });
 
@@ -784,6 +791,7 @@
                 return;
             }
 
+            isRegistering = true;
             try {
                 // Check if username is already taken
                 const usersRef = ref(database, 'users');
@@ -794,6 +802,7 @@
                     const usernameExists = Object.values(users).some(user => user.username === username);
                     if (usernameExists) {
                         alert('Username already taken');
+                        isRegistering = false;
                         return;
                     }
                 }
@@ -812,8 +821,10 @@
                     lastActive: new Date().toISOString()
                 });
 
+                isRegistering = false;
                 closeAccountPanel();
             } catch (error) {
+                isRegistering = false;
                 alert(error.message);
             }
         }
@@ -889,27 +900,34 @@
             }
 
             const userRef = ref(database, `users/${currentUser.uid}`);
-            const snapshot = await onValue(userRef, (snapshot) => {
-                const userData = snapshot.val();
-                if (userData && userData.isAdmin) {
-                    if (confirm('Are you sure you want to clear all messages? This will clear messages for everyone.')) {
+            const snapshot = await get(userRef);
+            const userData = snapshot.val();
+            
+            if (userData && userData.isAdmin) {
+                if (confirm('Are you sure you want to clear all messages? This will clear messages for everyone.')) {
+                    try {
+                        // Clear threads
+                        const threadsRef = ref(database, 'threads');
+                        await remove(threadsRef);
+                        
+                        // Clear messages
                         const messagesRef = ref(database, 'messages');
-                        remove(messagesRef)
-                            .then(() => {
-                                document.querySelector('#threads').innerHTML = '';
-                                currentThreadId = 1;
-                                console.log("All messages cleared successfully");
-                            })
-                            .catch((error) => {
-                                console.error("Error clearing messages:", error);
-                                alert("Failed to clear messages. Please try again.");
-                            });
+                        await remove(messagesRef);
+                        
+                        // Clear UI
+                        document.querySelector('#threads').innerHTML = '';
+                        currentThreadId = 1;
+                        
+                        console.log("All messages cleared successfully");
+                        closeAdminPanel();
+                    } catch (error) {
+                        console.error("Error clearing messages:", error);
+                        alert("Failed to clear messages. Please try again.");
                     }
-                    closeAdminPanel();
-                } else {
-                    alert('You do not have admin privileges');
                 }
-            });
+            } else {
+                alert('You do not have admin privileges');
+            }
         }
 
         // Add keyboard shortcut for admin panel
