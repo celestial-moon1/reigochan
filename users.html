@@ -7,184 +7,271 @@
     <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet">
     <style>
         :root {
-            /* Light theme (default) */
-            --board-green: #0f0c0d;
-            --text-color: #789922;
-            --link-color: #dd0000;
-            --background: #eef2ff;
-            --post-background: #f0e0d6;
-            --border-color: #d9bfb7;
-            --quote-color: #789922;
-            --sage-color: #707070;
-            --header-text: #fff;
-            --input-background: #fff;
-            --input-text: #000;
-        }
-
-        [data-theme="dark"] {
-            --board-green: #1a1a1a;
-            --text-color: #8f9;
-            --link-color: #f55;
-            --background: #1a1a1a;
-            --post-background: #2a2a2a;
-            --border-color: #3a3a3a;
-            --quote-color: #8f9;
-            --sage-color: #888;
-            --header-text: #fff;
-            --input-background: #2a2a2a;
-            --input-text: #fff;
+            --board-bg: #d6daf0;
+            --post-bg: #f0e0d6;
+            --border: #b7c5d9;
+            --text: #000;
+            --link: #34345c;
+            --quote: #789922;
+            --post-number: #117743;
+            --timestamp: #aaa;
         }
 
         body {
-            font-family: "MS Pゴシック", "MS PGothic", "Mona", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro W3", "メイリオ", "Meiryo", "ＭＳ Ｐゴシック", sans-serif;
-            background-color: var(--background);
-            color: var(--input-text);
+            background: #e9ecf2;
+            color: #000;
+            font-family: "Segoe UI", "Arial", "Helvetica Neue", Helvetica, Arial, "Liberation Sans", "Nimbus Sans L", sans-serif;
+            font-size: 13px;
             margin: 0;
             padding: 0;
-            line-height: 1.4;
-            font-size: 14px;
-            transition: background-color 0.3s, color 0.3s;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.25) 0%, 
+                rgba(0,0,0,0.12) 8%, 
+                rgba(0,0,0,0) 18%, 
+                rgba(0,0,0,0) 82%, 
+                rgba(0,0,0,0.12) 92%, 
+                rgba(0,0,0,0.25) 100%
+            );
+        }
+
+        [data-theme="dark"] body {
+            background: #22242a;
+            color: #d7d7d7;
+        }
+
+        [data-theme="dark"] body::before {
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.35) 0%, 
+                rgba(0,0,0,0.15) 8%, 
+                rgba(0,0,0,0) 18%, 
+                rgba(0,0,0,0) 82%, 
+                rgba(0,0,0,0.15) 92%, 
+                rgba(0,0,0,0.35) 100%
+            );
         }
 
         .board-header {
-            background-color: var(--board-green);
-            color: var(--header-text);
-            padding: 5px;
             text-align: center;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 10px;
+            margin: 16px 0 8px 0;
+            font-family: serif;
+            position: relative;
+            z-index: 1;
         }
 
         .board-header h1 {
-            margin: 0;
             font-size: 20px;
-            color: var(--header-text);
-            font-weight: normal;
-        }
-
-        .board-header a {
+            font-weight: bold;
+            margin: 0;
+            color: #000;
             text-decoration: none;
-            color: var(--header-text);
+            letter-spacing: 0.5px;
+            font-family: Tahoma, sans-serif;
         }
 
-        .profile-container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: var(--post-background);
-            border: 1px solid var(--border-color);
+        [data-theme="dark"] .board-header h1 {
+            color: #e0e0e0;
         }
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+        .board-header p {
+            font-size: 13px;
+            margin: 2px 0 0 0;
+            color: #222;
         }
 
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border: 1px solid var(--border-color);
-            margin-right: 20px;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .profile-info {
-            flex-grow: 1;
-        }
-
-        .username {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--text-color);
-            margin: 0 0 5px 0;
-        }
-
-        .bio {
-            color: var(--input-text);
-            margin: 10px 0;
-            white-space: pre-wrap;
-        }
-
-        .profile-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .stat-item {
-            background-color: var(--input-background);
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--sage-color);
-        }
-
-        .user-posts {
-            margin-top: 20px;
-        }
-
-        .post {
-            background-color: var(--input-background);
-            border: 1px solid var(--border-color);
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-
-        .post-header {
-            margin-bottom: 5px;
-            font-size: 12px;
-            color: var(--sage-color);
-        }
-
-        .post-content {
-            white-space: pre-wrap;
+        [data-theme="dark"] .board-header p {
+            color: #b0b0b0;
         }
 
         .user-info {
-            display: none;
-            margin-left: 10px;
-            color: var(--header-text);
+            margin-left: 8px;
+            font-size: 14px;
+            color: #333;
         }
-
-        .user-info.visible {
-            display: inline-block;
+        [data-theme="dark"] .user-info {
+            color: #b0b0b0;
         }
-
         .logout-btn {
             margin-left: 10px;
             font-size: 12px;
-            color: var(--link-color);
+            color: #0055aa;
             cursor: pointer;
-        }
-
-        .edit-profile-btn {
-            background-color: var(--board-green);
-            color: var(--header-text);
+            background: none;
             border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 12px;
-            margin-left: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
         }
-
-        .edit-profile-btn:hover {
-            background-color: #2a2a2a;
+        [data-theme="dark"] .logout-btn {
+            color: #7ecfff;
+        }
+        .logout-btn:hover {
+            color: #d00;
+            background: #e0e0e0;
+        }
+        [data-theme="dark"] .logout-btn:hover {
+            color: #ff7e7e;
+            background: #23243a;
+        }
+        .profile-container {
+            max-width: 900px;
+            margin: 32px auto 0 auto;
+            background: #f0e0d6;
+            border: 1px solid #b7c5d9;
+            border-radius: 4px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.18), 0 1.5px 8px rgba(0,0,0,0.12);
+            padding: 0 0 8px 0;
+            font-family: "Segoe UI", "Arial", "Helvetica Neue", Helvetica, Arial, "Liberation Sans", "Nimbus Sans L", sans-serif;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            z-index: 1;
+        }
+        [data-theme="dark"] .profile-container {
+            background: #23242c;
+            border-color: #44485a;
+        }
+        .profile-header {
+            font-size: 16px;
+            padding: 12px 18px 8px 18px;
+            border-bottom: 1px solid #b7c5d9;
+            background: #f6f6fa;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        [data-theme="dark"] .profile-header {
+            background: #23243a;
+            border-bottom: 1px solid #44485a;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #b7c5d9;
+            border-radius: 2px;
+            background-size: cover;
+            background-position: center;
+            margin-right: 20px;
+            position: relative;
+        }
+        [data-theme="dark"] .avatar {
+            border-color: #44485a;
+        }
+        .online-indicator {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+        }
+        [data-theme="dark"] .online-indicator {
+            border-color: #23243a;
+        }
+        .profile-info {
+            flex-grow: 1;
+        }
+        .username-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .username {
+            font-size: 24px;
+            font-weight: bold;
+            color: #117743;
+            margin: 0 0 5px 0;
+            font-family: "Segoe UI Semibold", "Arial", sans-serif;
+        }
+        .role-label {
+            font-size: 14px;
+            font-weight: normal;
+            color: #d00;
+            font-style: italic;
+        }
+        .bio {
+            color: #333;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+        [data-theme="dark"] .bio {
+            color: #b0b0b0;
+        }
+        .profile-stats {
+            display: flex;
+            gap: 24px;
+            margin: 18px 0 18px 0;
+            justify-content: center;
+        }
+        .stat-item {
+            background: #fff;
+            border: 1px solid #b7c5d9;
+            border-radius: 2px;
+            padding: 10px 18px;
+            text-align: center;
+        }
+        [data-theme="dark"] .stat-item {
+            background: #23243a;
+            border-color: #44485a;
+        }
+        .stat-value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #117743;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .user-posts {
+            margin-top: 20px;
+            padding: 0 18px 18px 18px;
+        }
+        .user-posts h3 {
+            margin-top: 0;
+            font-size: 16px;
+            color: #0055aa;
+        }
+        .post {
+            background: #fff;
+            border: 1px solid #b7c5d9;
+            border-radius: 2px;
+            margin-bottom: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+        [data-theme="dark"] .post {
+            background: #23243a;
+            border-color: #44485a;
+        }
+        .post-header {
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        .post-content {
+            white-space: pre-wrap;
+            color: #222;
+        }
+        [data-theme="dark"] .post-content {
+            color: #d7d7d7;
         }
     </style>
 </head>
@@ -201,9 +288,14 @@
 
     <div class="profile-container">
         <div class="profile-header">
-            <div class="avatar" id="userAvatar"></div>
+            <div class="avatar" id="userAvatar">
+                <div class="online-indicator" id="onlineIndicator" style="display: none;"></div>
+            </div>
             <div class="profile-info">
-                <h2 class="username" id="username">Loading...</h2>
+                <div class="username-container">
+                    <h2 class="username" id="username">Loading...</h2>
+                    <span class="role-label" id="roleLabel" style="display: none;"></span>
+                </div>
                 <div class="bio" id="bio"></div>
                 <button class="edit-profile-btn" id="editProfileBtn" style="display: none;">Edit Profile</button>
             </div>
@@ -231,24 +323,14 @@
     </div>
 
     <script type="module">
+        // Import Firebase modules and config
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-analytics.js";
-        import { getDatabase, ref, get, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+        import { getDatabase, ref, onValue, get, query, orderByChild, set, onDisconnect } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+        import firebaseConfig from './firebase-config.js';
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDalIuZpXzyLSkz9WGDgEHWdWzAZ_heRUU",
-            authDomain: "chan-3079a.firebaseapp.com",
-            projectId: "chan-3079a",
-            storageBucket: "chan-3079a.firebasestorage.app",
-            messagingSenderId: "583844977468",
-            appId: "1:583844977468:web:f62a787653fe9f39c61c39",
-            measurementId: "G-Y2RBNG0TF1",
-            databaseURL: "https://chan-3079a-default-rtdb.asia-southeast1.firebasedatabase.app"
-        };
-
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const database = getDatabase(app);
         const auth = getAuth(app);
 
@@ -323,64 +405,164 @@
             if (!profileUserId) return;
 
             const userRef = ref(database, `users/${profileUserId}`);
+            
+            // First get a snapshot for immediate display
             const snapshot = await get(userRef);
-            const userData = snapshot.val();
-
-            if (userData) {
-                document.getElementById('username').textContent = userData.username;
-                document.getElementById('bio').textContent = userData.bio || '';
-                if (userData.avatar) {
-                    document.getElementById('userAvatar').style.backgroundImage = `url(${userData.avatar})`;
-                }
-                document.getElementById('joinDate').textContent = new Date(userData.createdAt).toLocaleDateString();
-                document.getElementById('lastActive').textContent = new Date(userData.lastActive || userData.createdAt).toLocaleDateString();
-
-                // Show edit button if viewing own profile
-                if (currentUser && currentUser.uid === profileUserId) {
-                    document.getElementById('editProfileBtn').style.display = 'inline-block';
-                }
-
-                // Load user posts
-                loadUserPosts();
-            } else {
+            const initialUserData = snapshot.val();
+            updateUserDisplay(initialUserData);
+            
+            // Then set up real-time listener for future updates
+            onValue(userRef, (snapshot) => {
+                const userData = snapshot.val();
+                updateUserDisplay(userData);
+            });
+        }
+        
+        // Helper function to update the user display
+        function updateUserDisplay(userData) {
+            if (!userData) {
                 document.getElementById('username').textContent = '<deleted>';
+                document.getElementById('roleLabel').style.display = 'none';
                 document.getElementById('bio').textContent = 'This user no longer exists.';
+                document.getElementById('onlineIndicator').style.display = 'none';
+                return;
             }
+            
+            // Update username
+            document.getElementById('username').textContent = userData.username || 'Anonymous';
+            
+            // Handle role label - automatically use "Administrator" for admin accounts and "Member" for others
+            const roleLabel = document.getElementById('roleLabel');
+            if (userData.isAdmin) {
+                roleLabel.textContent = "Administrator";
+                roleLabel.style.display = 'inline';
+            } else {
+                roleLabel.textContent = "Member";
+                roleLabel.style.display = 'inline';
+            }
+            
+            document.getElementById('bio').textContent = userData.bio || '';
+            
+            // Set avatar
+            if (userData.avatar) {
+                document.getElementById('userAvatar').style.backgroundImage = `url(${userData.avatar})`;
+            }
+            
+            // Handle online indicator in real-time
+            const onlineIndicator = document.getElementById('onlineIndicator');
+            const tenMinutesAgo = new Date();
+            tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+            
+            if (userData.lastActive && new Date(userData.lastActive) > tenMinutesAgo) {
+                onlineIndicator.style.display = 'block';
+                console.log('User is online - last active:', new Date(userData.lastActive));
+            } else {
+                onlineIndicator.style.display = 'none';
+                console.log('User is offline - last active:', userData.lastActive ? new Date(userData.lastActive) : 'never');
+            }
+            
+            document.getElementById('joinDate').textContent = userData.createdAt ? new Date(userData.createdAt).toLocaleDateString() : '-';
+            document.getElementById('lastActive').textContent = userData.lastActive ? new Date(userData.lastActive).toLocaleDateString() : '-';
+
+            // Show edit button if viewing own profile
+            if (currentUser && currentUser.uid === profileUserId) {
+                document.getElementById('editProfileBtn').style.display = 'inline-block';
+            }
+
+            // Apply profile customization (background)
+            applyProfileCustomization(userData);
         }
 
         // Load user posts
         async function loadUserPosts() {
-            const postsRef = ref(database, 'messages');
-            const userPostsQuery = query(postsRef, orderByChild('userId'), limitToLast(10));
-            const snapshot = await get(userPostsQuery);
+            if (!profileUserId) return;
+
+            const threadsRef = ref(database, 'threads');
+            const snapshot = await get(threadsRef);
             const posts = [];
             
-            snapshot.forEach((childSnapshot) => {
-                const post = childSnapshot.val();
-                if (post.userId === profileUserId) {
-                    posts.push(post);
+            if (snapshot.exists()) {
+                const threads = snapshot.val();
+                
+                // Iterate through all threads
+                for (const threadId in threads) {
+                    const thread = threads[threadId];
+                    if (thread.messages) {
+                        // Check each message in the thread
+                        thread.messages.forEach((message, index) => {
+                            if (message.userId === profileUserId) {
+                                posts.push({
+                                    ...message,
+                                    threadId,
+                                    isOP: index === 0,
+                                    postNumber: index === 0 ? threadId : `${threadId}-${index}`
+                                });
+                            }
+                        });
+                    }
                 }
-            });
+            }
 
-            // Sort posts by timestamp
+            // Sort posts by timestamp in descending order (newest first)
             posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             const postsContainer = document.getElementById('userPosts');
             postsContainer.innerHTML = '';
 
+            if (posts.length === 0) {
+                postsContainer.innerHTML = '<div class="no-posts">No posts found</div>';
+                document.getElementById('postCount').textContent = '0';
+                return;
+            }
+
             posts.forEach(post => {
                 const postDiv = document.createElement('div');
                 postDiv.className = 'post';
+                
+                const postType = post.isOP ? 'Thread Starter' : 'Reply';
+                const subject = post.subject ? `<span class="post-subject">${post.subject}</span>` : '';
+                
                 postDiv.innerHTML = `
                     <div class="post-header">
-                        ${post.postNumber} - ${new Date(post.timestamp).toLocaleString()}
+                        <span class="post-type">[${postType}]</span>
+                        ${subject}
+                        <span class="post-number">No.${post.postNumber}</span>
+                        <span class="post-date">${new Date(post.timestamp).toLocaleString()}</span>
                     </div>
+                    ${post.image ? `
+                        <div class="post-image">
+                            <a href="${post.image}" target="_blank">
+                                <img src="${post.image}" alt="Post image" style="max-width: 150px; max-height: 150px;">
+                            </a>
+                        </div>
+                    ` : ''}
                     <div class="post-content">${formatMessage(post.message)}</div>
                 `;
                 postsContainer.appendChild(postDiv);
             });
 
             document.getElementById('postCount').textContent = posts.length;
+        }
+
+        // Apply profile customization
+        function applyProfileCustomization(userData) {
+            // Set the outer background (body)
+            if (userData.profileBgUrl) {
+                document.body.style.backgroundImage = `url('${userData.profileBgUrl}')`;
+                document.body.style.backgroundColor = '';
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+            } else {
+                document.body.style.backgroundImage = '';
+                document.body.style.backgroundColor = userData.profileBgColor || '#f0e0d6';
+            }
+            // Reset the profile container background for contrast
+            const container = document.querySelector('.profile-container');
+            if (container) {
+                container.style.background = '';
+                container.style.backgroundColor = '';
+                container.style.backgroundImage = '';
+            }
         }
 
         // URL handling
@@ -436,12 +618,19 @@
                 };
             }
             
-            // Load user data
+            // Load user data (this now sets up real-time monitoring)
             await loadUserData();
             
+            // Load posts (once at startup)
+            await loadUserPosts();
+            
+            // Remove periodic check since we have real-time monitoring now
+            
             // Hide loading overlay when everything is ready
-            isPageLoaded = true;
-            document.getElementById('loadingOverlay').classList.add('hidden');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+            }
         });
 
         // Auth state observer
@@ -451,6 +640,9 @@
                 document.getElementById('userInfo').textContent = `Logged in as: ${user.email}`;
                 document.getElementById('userInfo').classList.add('visible');
                 document.getElementById('logoutBtn').style.display = 'inline';
+                
+                // Setup global presence system
+                setupPresenceSystem(user.uid);
                 
                 // Show edit button if viewing own profile
                 if (user.uid === profileUserId) {
@@ -471,6 +663,61 @@
                 document.getElementById('editProfileBtn').style.display = 'none';
             }
         });
+        
+        // Global Presence System
+        function setupPresenceSystem(userId) {
+            if (!userId) return;
+            
+            // Establish two connections:
+            // 1. A 'online' status that is removed when the client disconnects
+            // 2. A 'lastOnline' status that is updated with the server timestamp when the user disconnects
+            
+            // Create references
+            const userStatusRef = ref(database, `status/${userId}`);
+            const userRef = ref(database, `users/${userId}`);
+            
+            // Get existing user data to preserve it
+            get(userRef).then((snapshot) => {
+                const userData = snapshot.val() || {};
+                
+                // When user connects, update status to 'online'
+                const isOnlineRef = ref(database, '.info/connected');
+                onValue(isOnlineRef, (snapshot) => {
+                    // If we're not currently connected, don't do anything
+                    if (snapshot.val() === false) return;
+                    
+                    // When user disconnects, update the lastActive timestamp
+                    const userLastActiveRef = ref(database, `users/${userId}/lastActive`);
+                    onDisconnect(userLastActiveRef).set(new Date().toISOString());
+                    
+                    // Also update a status path to show they're offline
+                    onDisconnect(userStatusRef).set('offline');
+                    
+                    // Now set the user as online
+                    set(userStatusRef, 'online');
+                    
+                    // Update lastActive timestamp whenever user loads any page
+                    set(userLastActiveRef, new Date().toISOString());
+                    
+                    console.log('Presence system initialized for user:', userId);
+                });
+            });
+            
+            // Update the timestamp every minute while the user is active on the site
+            setInterval(() => {
+                if (userId) {
+                    const userLastActiveRef = ref(database, `users/${userId}/lastActive`);
+                    set(userLastActiveRef, new Date().toISOString());
+                    console.log('Updated active timestamp for user:', userId);
+                }
+            }, 60000); // Update every minute
+        }
+        
+        // Update user's online status (legacy function kept for compatibility)
+        async function updateUserOnlineStatus(userId) {
+            // This function is now replaced by the presence system
+            console.log('Legacy updateUserOnlineStatus called, using presence system instead');
+        }
 
         // Logout handler
         document.getElementById('logoutBtn').addEventListener('click', async () => {
@@ -489,4 +736,4 @@
         window.getPageUrl = getPageUrl;
     </script>
 </body>
-</html> 
+</html>

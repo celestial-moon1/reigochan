@@ -1,0 +1,2427 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>05chan - Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css" rel="stylesheet">
+    <style>
+        :root {
+            --board-bg: #d6daf0;
+            --post-bg: #f0e0d6;
+            --border: #b7c5d9;
+            --text: #000;
+            --link: #34345c;
+            --quote: #789922;
+            --post-number: #117743;
+            --timestamp: #aaa;
+        }
+
+        body {
+            background: #e9ecf2;
+            color: #000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.25) 0%, 
+                rgba(0,0,0,0.12) 8%, 
+                rgba(0,0,0,0) 18%, 
+                rgba(0,0,0,0) 82%, 
+                rgba(0,0,0,0.12) 92%, 
+                rgba(0,0,0,0.25) 100%
+            );
+        }
+
+        [data-theme="dark"] body {
+            background: #1a1b26;
+            color: #d7d7d7;
+        }
+
+        [data-theme="dark"] body::before {
+            background: linear-gradient(to right, 
+                rgba(0,0,0,0.35) 0%, 
+                rgba(0,0,0,0.15) 8%, 
+                rgba(0,0,0,0) 18%, 
+                rgba(0,0,0,0) 82%, 
+                rgba(0,0,0,0.15) 92%, 
+                rgba(0,0,0,0.35) 100%
+            );
+        }
+
+        .board-header {
+            text-align: center;
+            margin: 16px 0 8px 0;
+            font-family: serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        .board-header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+            color: #000;
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            font-family: Tahoma, sans-serif;
+        }
+
+        [data-theme="dark"] .board-header h1 {
+            color: #e0e0e0;
+        }
+
+        .user-info {
+            margin-left: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+        [data-theme="dark"] .user-info {
+            color: #b0b0b0;
+        }
+        .logout-btn {
+            margin-left: 10px;
+            font-size: 12px;
+            color: #0055aa;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: color 0.2s, background 0.2s;
+        }
+        [data-theme="dark"] .logout-btn {
+            color: #7ecfff;
+        }
+        .logout-btn:hover {
+            color: #d00;
+            background: #e0e0e0;
+        }
+        [data-theme="dark"] .logout-btn:hover {
+            color: #ff7e7e;
+            background: #23243a;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+        [data-theme="dark"] .admin-container {
+            background: #1a1b26;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            border-color: #363b54;
+        }
+        
+        .admin-header {
+            padding: 24px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        [data-theme="dark"] .admin-header {
+            background: #2d2d3d;
+            border-bottom: 1px solid #363b54;
+        }
+        
+        .admin-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .admin-content {
+            padding: 24px;
+        }
+        
+        .admin-section {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            margin-bottom: 24px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+        [data-theme="dark"] .admin-section {
+            background: #2a2a3a;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .admin-section h3 {
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid #e9ecef;
+        }
+        [data-theme="dark"] .admin-section h3 {
+            color: #e0e0e0;
+            border-bottom: 1px solid #363b54;
+        }
+        
+        .admin-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        [data-theme="dark"] .admin-controls {
+            background: #2d2d3d;
+            border-bottom: 1px solid #363b54;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #dee2e6;
+            background: #fff;
+            color: #2c3e50;
+            transition: all 0.2s;
+        }
+
+        [data-theme="dark"] .btn {
+            background: #363b54;
+            color: #e0e0e0;
+            border: 1px solid #454c6d;
+        }
+
+        .btn:hover {
+            background: #f8f9fa;
+            border-color: #c1c9d0;
+        }
+
+        [data-theme="dark"] .btn:hover {
+            background: #454c6d;
+            color: #fff;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: #fff;
+            border-color: #0056b3;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            color: #fff;
+        }
+
+        [data-theme="dark"] .btn-primary {
+            background: #0066cc;
+            color: #fff;
+            border-color: #0056b3;
+        }
+
+        [data-theme="dark"] .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-danger {
+            background: #fff;
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        [data-theme="dark"] .btn-danger {
+            background: #dc3545;
+            color: #fff;
+            border-color: #bd2130;
+        }
+
+        [data-theme="dark"] .btn-danger:hover {
+            background: #bd2130;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border: 1px solid #e9ecef;
+        }
+        
+        .admin-table th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 16px;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        [data-theme="dark"] .admin-table th {
+            background: #2d2d3d;
+            color: #e0e0e0;
+            border-bottom: 2px solid #363b54;
+        }
+        
+        .admin-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+            color: #2c3e50;
+            vertical-align: middle;
+        }
+        [data-theme="dark"] .admin-table td {
+            border-bottom: 1px solid #363b54;
+        }
+        
+        .admin-table tr:hover {
+            background: #f8f9fa;
+        }
+        [data-theme="dark"] .admin-table tr:hover {
+            background: #32324a;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-control {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2c3e50;
+            background: #fff;
+            min-width: 120px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        [data-theme="dark"] .form-control {
+            background: #363b54;
+            border-color: #454c6d;
+            color: #e0e0e0;
+        }
+        
+        [data-theme="dark"] .form-control:focus {
+            border-color: #80bdff;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+
+        /* Add styles for select dropdowns */
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23495057' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 28px;
+        }
+
+        [data-theme="dark"] select.form-control {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23e0e0e0' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        }
+
+        /* Add styles for search input */
+        input[type="text"].form-control {
+            min-width: 200px;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        [data-theme="dark"] .loading-overlay {
+            background: rgba(0, 0, 0, 0.8);
+        }
+        
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+
+        .post-subject {
+            color: #d00;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        [data-theme="dark"] .post-subject {
+            color: #ff7e7e;
+        }
+        #postsTableBody img {
+            border: 1px solid #b7c5d9;
+            border-radius: 2px;
+            margin: 2px 0;
+        }
+        [data-theme="dark"] #postsTableBody img {
+            border-color: #44485a;
+        }
+        .btn-danger {
+            background-color: #ffebeb !important;
+            color: #d00 !important;
+            border-color: #ffd0d0 !important;
+        }
+        [data-theme="dark"] .btn-danger {
+            background-color: #3a2323 !important;
+            color: #ff7e7e !important;
+            border-color: #4a2828 !important;
+        }
+        .btn-danger:hover {
+            background-color: #ffe0e0 !important;
+            color: #ff0000 !important;
+        }
+        [data-theme="dark"] .btn-danger:hover {
+            background-color: #4a2828 !important;
+            color: #ff9e9e !important;
+        }
+        .search-controls {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        [data-theme="dark"] .search-controls {
+            background: #2d2d3d;
+            border-color: #363b54;
+        }
+
+        .filter-controls {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        [data-theme="dark"] .filter-controls {
+            background: #2d2d3d;
+            border-color: #363b54;
+        }
+
+        .filter-controls label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        [data-theme="dark"] .filter-controls label {
+            color: #e0e0e0;
+        }
+
+        .filter-controls label:hover {
+            background: #e9ecef;
+        }
+
+        [data-theme="dark"] .filter-controls label:hover {
+            background: #363b54;
+        }
+
+        .filter-controls input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0066cc;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 3px;
+        }
+
+        [data-theme="dark"] .filter-controls input[type="checkbox"] {
+            background: #363b54;
+            border-color: #454c6d;
+        }
+        #loadingIndicator, #noMorePosts {
+            text-align: center;
+            padding: 20px;
+            color: #8b949e;
+            font-size: 14px;
+            background: #2d2d3d;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+        .post-content {
+            max-width: 300px;
+            overflow: hidden;
+            word-break: break-all;
+        }
+
+        .truncated-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #333;
+            display: block;
+            font-size: 13px;
+            line-height: 1.4;
+            max-width: 100%;
+            word-break: break-all;
+        }
+
+        [data-theme="dark"] .truncated-text {
+            color: #e0e0e0;
+        }
+
+        /* Add new style for full text on hover */
+        .truncated-text:hover {
+            white-space: normal;
+            word-wrap: break-word;
+            position: relative;
+            z-index: 1;
+            background: inherit;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 4px;
+            margin: -4px;
+        }
+
+        [data-theme="dark"] .truncated-text:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        [data-theme="dark"] .admin-table td {
+            color: #e0e0e0;
+            border-color: #363b54;
+            background: #1a1b26;
+        }
+
+        [data-theme="dark"] .admin-table {
+            background: #1a1b26;
+            border-color: #363b54;
+        }
+
+        [data-theme="dark"] .admin-table th {
+            background: #24273a;
+            color: #e0e0e0;
+            border-color: #363b54;
+        }
+
+        [data-theme="dark"] .admin-table tr:nth-child(even) {
+            background: #1d1e2a;
+        }
+
+        [data-theme="dark"] .admin-table tr:hover {
+            background: #2d2d3d;
+        }
+
+        /* Add new style for post IDs */
+        .post-id {
+            font-family: "Consolas", "Menlo", "Monaco", monospace;
+            font-size: 12px;
+            color: #0055aa;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        [data-theme="dark"] .post-id {
+            color: #7ecfff;
+        }
+
+        .status-indicator {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin-right: 4px;
+        }
+
+        .status-indicator.online {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-indicator.offline {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+        .status-indicator.banned {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        [data-theme="dark"] .status-indicator.online {
+            background: #1a3d1a;
+            color: #4caf50;
+        }
+
+        [data-theme="dark"] .status-indicator.offline {
+            background: #2d2d3d;
+            color: #999;
+        }
+
+        [data-theme="dark"] .status-indicator.banned {
+            background: #3d1a1a;
+            color: #ff4444;
+        }
+
+        .btn-sm {
+            padding: 2px 6px;
+            font-size: 12px;
+            margin: 0 2px;
+        }
+
+        .search-controls, .filter-controls {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        [data-theme="dark"] .search-controls,
+        [data-theme="dark"] .filter-controls {
+            background: #2d2d3d;
+            border-color: #363b54;
+        }
+
+        .truncated-text {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .truncated-text:hover {
+            white-space: normal;
+            word-wrap: break-word;
+            position: relative;
+            z-index: 1;
+            background: inherit;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            padding: 4px;
+            margin: -4px;
+        }
+
+        [data-theme="dark"] .truncated-text:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Image handling styles */
+        .image-preview {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .image-preview:hover {
+            transform: scale(1.1);
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .image-modal.visible {
+            display: flex;
+        }
+
+        .image-modal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.3);
+        }
+
+        #loadMoreUsersContainer,
+        #loadMorePostsContainer {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        #loadMoreUsersBtn,
+        #loadMorePostsBtn {
+            padding: 8px 16px;
+            font-size: 14px;
+            color: #2c3e50;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #loadMoreUsersBtn:hover,
+        #loadMorePostsBtn:hover {
+            background: #f8f9fa;
+            border-color: #c1c9d0;
+        }
+
+        [data-theme="dark"] #loadMoreUsersBtn,
+        [data-theme="dark"] #loadMorePostsBtn {
+            background: #2d2d3d;
+            border-color: #363b54;
+            color: #e0e0e0;
+        }
+
+        [data-theme="dark"] #loadMoreUsersBtn:hover,
+        [data-theme="dark"] #loadMorePostsBtn:hover {
+            background: #363b54;
+            border-color: #454c6d;
+        }
+
+        #userLoadingIndicator,
+        #loadingIndicator {
+            color: #6c757d;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        [data-theme="dark"] #userLoadingIndicator,
+        [data-theme="dark"] #loadingIndicator {
+            color: #999;
+        }
+
+        #noMoreUsers,
+        #noMorePosts {
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px;
+        }
+
+        [data-theme="dark"] #noMoreUsers,
+        [data-theme="dark"] #noMorePosts {
+            color: #999;
+        }
+
+        [data-theme="dark"] #loadMoreUsersContainer,
+        [data-theme="dark"] #loadMorePostsContainer {
+            background: #2d2d3d;
+            border-color: #363b54;
+        }
+
+        .load-more-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 16px;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+
+        .load-more-btn {
+            padding: 8px 20px;
+            font-size: 14px;
+            color: #2c3e50;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            background: #e9ecef;
+            border-color: #c1c9d0;
+        }
+
+        [data-theme="dark"] .load-more-container {
+            background: #2d2d3d;
+            border-color: #363b54;
+        }
+
+        [data-theme="dark"] .load-more-btn {
+            background: #23243a;
+            border-color: #363b54;
+            color: #e0e0e0;
+        }
+
+        [data-theme="dark"] .load-more-btn:hover {
+            background: #363b54;
+            border-color: #454c6d;
+        }
+
+        .loading-indicator {
+            color: #6c757d;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        [data-theme="dark"] .loading-indicator {
+            color: #999;
+        }
+
+        .no-more-items {
+            color: #6c757d;
+            font-style: italic;
+            padding: 10px;
+        }
+
+        [data-theme="dark"] .no-more-items {
+            color: #999;
+        }
+
+        .no-more-message {
+            text-align: center;
+            padding: 16px;
+            color: #6c757d;
+            font-style: italic;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        [data-theme="dark"] .no-more-message {
+            background: #2d2d3d;
+            border-color: #363b54;
+            color: #999;
+        }
+
+        #noMorePosts, #noMoreUsers {
+            text-align: center;
+            padding: 16px;
+            color: #6c757d;
+            font-style: italic;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        [data-theme="dark"] #noMorePosts,
+        [data-theme="dark"] #noMoreUsers {
+            background: #2d2d3d;
+            border-color: #363b54;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="board-header">
+        <div class="title">
+            <a href="/">
+                <h1>/05chan/ - Admin Panel</h1>
+            </a>
+            <span class="user-info" id="userInfo"></span>
+            <span class="logout-btn" id="logoutBtn" style="display: none;">[Logout]</span>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h2>Admin Panel</h2>
+        </div>
+
+        <!-- User Management Section -->
+        <div class="admin-section">
+            <h3>User Management</h3>
+            <div class="admin-controls">
+                <button id="refreshUsersBtn" class="btn">Refresh Users</button>
+                <button id="banUserBtn" class="btn btn-danger">Ban Selected User</button>
+            </div>
+            <div class="search-controls">
+                <input type="text" id="userSearchInput" class="form-control" placeholder="Search users...">
+                <select id="userSearchFilter" class="form-control">
+                    <option value="all">All Fields</option>
+                    <option value="username">Username</option>
+                    <option value="email">Email</option>
+                </select>
+                <button onclick="searchUsers()" class="btn">Search</button>
+                <button onclick="clearUserSearch()" class="btn">Clear</button>
+            </div>
+            <div class="filter-controls">
+                <label>
+                    <input type="checkbox" id="adminOnlyFilter"> Administrators Only
+                </label>
+                <label>
+                    <input type="checkbox" id="bannedOnlyFilter"> Banned Users Only
+                </label>
+                <label>
+                    <input type="checkbox" id="onlineOnlyFilter"> Online Users Only
+                </label>
+                <select id="userSortOrder" class="form-control">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="username">Username</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Join Date</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="load-more-container">
+                <button id="loadMoreUsersBtn" class="load-more-btn">Load More Users</button>
+                <div id="userLoadingIndicator" class="loading-indicator" style="display: none;">Loading...</div>
+                <div id="noMoreUsers" class="no-more-message" style="display: none;">No more users to load</div>
+            </div>
+        </div>
+
+        <!-- Post Management Section -->
+        <div class="admin-section">
+            <h3>Post Management</h3>
+            <div class="admin-controls">
+                <button id="refreshPostsBtn" class="btn">Refresh Posts</button>
+                <button id="deleteSelectedBtn" class="btn btn-danger">Delete Selected</button>
+            </div>
+            <div class="search-controls">
+                <input type="text" id="postSearchInput" class="form-control" placeholder="Search posts...">
+                <select id="postSearchFilter" class="form-control">
+                    <option value="all">All Fields</option>
+                    <option value="content">Content</option>
+                    <option value="username">Username</option>
+                    <option value="threadId">Thread ID</option>
+                </select>
+                <button onclick="searchPosts()" class="btn">Search</button>
+                <button onclick="clearPostSearch()" class="btn">Clear</button>
+            </div>
+            <div class="filter-controls">
+                <label>
+                    <input type="checkbox" id="threadStartersOnly"> Thread Starters Only
+                </label>
+                <label>
+                    <input type="checkbox" id="withImagesOnly"> With Images Only
+                </label>
+                <select id="postSortOrder" class="form-control">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Post #</th>
+                            <th>Author</th>
+                            <th>Content</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="postsTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="load-more-container">
+                <button id="loadMorePostsBtn" class="load-more-btn">Load More Posts</button>
+                <div id="loadingIndicator" class="loading-indicator" style="display: none;">Loading...</div>
+                <div id="noMorePosts" class="no-more-message" style="display: none;">No more posts to load</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <img id="modalImage" src="" alt="Full size image">
+    </div>
+
+    <script type="module">
+        // Import Firebase modules and config
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, remove, set, get, query, orderByChild, limitToLast } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-database.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.7.1/firebase-auth.js";
+        import firebaseConfig from './firebase-config.js';
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        let currentUser = null;
+        let isAdmin = false;
+
+        // Global variables for pagination
+        let currentPage = 1;
+        let allPostsCache = [];
+        const postsPerPage = 20;
+
+        // Global variables for real-time updates
+        let updateQueue = [];
+        let isProcessingQueue = false;
+        const QUEUE_PROCESS_INTERVAL = 3000; // Process queue every 3 seconds
+        let queueInterval = null;
+        let lastProcessedTimestamp = Date.now();
+
+        // Global variables for post management
+        let filteredPosts = [];
+        let isLoading = false;
+        let hasMorePosts = true;
+        let currentSearchQuery = '';
+        let currentSearchFilter = 'all';
+        let currentFilters = {
+            threadsOnly: false,
+            imagesOnly: false,
+            sortOrder: 'newest'
+        };
+
+        // Global variables
+        let presenceInitialized = false;
+        
+        // Global Presence System
+        function setupPresenceSystem(userId) {
+            if (!userId || presenceInitialized) return;
+            
+            presenceInitialized = true;
+            console.log("Setting up presence system for user:", userId);
+            
+            // Create references
+            const userStatusRef = ref(database, `status/${userId}`);
+            const userRef = ref(database, `users/${userId}`);
+            
+            // Get existing user data to preserve it
+            get(userRef).then((snapshot) => {
+                const userData = snapshot.val() || {};
+                
+                // When user connects, update status to 'online'
+                const isOnlineRef = ref(database, '.info/connected');
+                onValue(isOnlineRef, (snapshot) => {
+                    // If we're not currently connected, don't do anything
+                    if (snapshot.val() === false) return;
+                    
+                    // When user disconnects, update the lastActive timestamp
+                    const userLastActiveRef = ref(database, `users/${userId}/lastActive`);
+                    onDisconnect(userLastActiveRef).set(new Date().toISOString());
+                    
+                    // Also update a status path to show they're offline
+                    onDisconnect(userStatusRef).set('offline');
+                    
+                    // Now set the user as online
+                    set(userStatusRef, 'online');
+                    
+                    // Update lastActive timestamp whenever user loads any page
+                    set(userLastActiveRef, new Date().toISOString());
+                });
+            });
+            
+            // Update the timestamp every minute while the user is active on the site
+            const intervalId = setInterval(() => {
+                if (userId) {
+                    const userLastActiveRef = ref(database, `users/${userId}/lastActive`);
+                    set(userLastActiveRef, new Date().toISOString());
+                }
+            }, 60000); // Update every minute
+            
+            // Clean up interval on page unload
+            window.addEventListener('beforeunload', () => {
+                clearInterval(intervalId);
+            });
+        }
+
+        // Load posts with real-time updates
+        let postsLoaded = false;
+        
+        function loadPosts(resetPagination = true) {
+            if (postsLoaded && !resetPagination) return;
+            
+            if (resetPagination) {
+                currentPage = 1;
+                allPostsCache = [];
+                filteredPosts = [];
+            }
+            
+            postsLoaded = true;
+            
+            const threadsRef = ref(database, 'threads');
+            const postsTableBody = document.getElementById('postsTableBody');
+            
+            // Show loading state
+            postsTableBody.innerHTML = '<tr><td colspan="5">Loading posts...</td></tr>';
+            
+            // Initial load using get()
+            get(threadsRef).then((snapshot) => {
+                console.log('Loading posts...');
+                if (!snapshot.exists()) {
+                    postsTableBody.innerHTML = '<tr><td colspan="5">No posts found</td></tr>';
+                    return;
+                }
+                
+                const threads = snapshot.val();
+                processAndDisplayPosts(threads);
+                
+                // Set up real-time listener for new posts
+                setupRealTimeUpdates(threadsRef);
+            }).catch(error => {
+                console.error('Error loading posts:', error);
+                postsTableBody.innerHTML = '<tr><td colspan="5">Error loading posts. Please try again.</td></tr>';
+            });
+        }
+
+        // Load theme preference
+        function loadTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+
+        // Auth state observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('userInfo').textContent = `Logged in as: ${user.email}`;
+                document.getElementById('userInfo').classList.add('visible');
+                document.getElementById('logoutBtn').style.display = 'inline';
+                
+                // Check if user is an admin
+                const userRef = ref(database, `users/${user.uid}`);
+                
+                // Set up continuous monitoring of admin status
+                onValue(userRef, (snapshot) => {
+                    const userData = snapshot.val();
+                    
+                    if (!userData || !userData.isAdmin) {
+                        // User is not an admin or data doesn't exist - redirect to home
+                        console.log('User is not authorized - redirecting to home');
+                        window.location.href = getBaseUrl() + '/';
+                        return;
+                    }
+                    
+                    isAdmin = true;
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    // Setup presence system for the current user
+                    setupPresenceSystem(user.uid);
+                    // Load admin panel data
+                    loadAdminData();
+                });
+            } else {
+                // Not logged in - redirect to home
+                window.location.href = getBaseUrl() + '/';
+            }
+        });
+        
+        // Load admin data
+        async function loadAdminData() {
+            // Verify admin status before loading data
+            const userRef = ref(database, `users/${currentUser.uid}`);
+            const snapshot = await get(userRef);
+            const userData = snapshot.val();
+            
+            if (!userData || !userData.isAdmin) {
+                console.log('Unauthorized access attempt - redirecting to home');
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+            
+            // Hide loading overlay initially to avoid flashing
+            hideLoadingOverlay();
+            
+            // Show loading state in tables while data loads
+            document.getElementById('usersTableBody').innerHTML = '<tr><td colspan="6">Loading users...</td></tr>';
+            document.getElementById('postsTableBody').innerHTML = '<tr><td colspan="5">Loading posts...</td></tr>';
+            
+            // Load data
+            loadUsers();
+            loadPosts();
+            await loadSystemSettings();
+        }
+        
+        // User management variables
+        let allUsersCache = [];
+        let filteredUsers = [];
+        let userCurrentPage = 1;
+        const usersPerPage = 50;
+        let isLoadingUsers = false;
+        let hasMoreUsers = true;
+
+        // Load users with real-time updates and pagination
+        function loadUsers(resetPagination = true) {
+            const usersRef = ref(database, 'users');
+            const statusRef = ref(database, 'status');
+            
+            if (resetPagination) {
+                userCurrentPage = 1;
+                allUsersCache = [];
+                filteredUsers = [];
+            }
+
+            // Show loading state
+            const usersTableBody = document.getElementById('usersTableBody');
+            usersTableBody.innerHTML = '<tr><td colspan="6">Loading users...</td></tr>';
+            
+            // Get current status data first
+            get(statusRef).then((statusSnapshot) => {
+                const initialStatusData = statusSnapshot.val() || {};
+                
+                // Set up real-time monitoring of user data
+                onValue(usersRef, (usersSnapshot) => {
+                    if (usersSnapshot.exists()) {
+                        const users = usersSnapshot.val();
+                        allUsersCache = Object.entries(users).map(([userId, user]) => ({
+                            id: userId,
+                            ...user,
+                            isOnline: initialStatusData[userId] === 'online'
+                        }));
+                        
+                        // Apply filters and search
+                        applyUserFilters();
+                    } else {
+                        usersTableBody.innerHTML = '<tr><td colspan="6">No users found</td></tr>';
+                    }
+                });
+            });
+        }
+
+        // Apply user filters and search
+        function applyUserFilters() {
+            const searchInput = document.getElementById('userSearchInput').value.toLowerCase();
+            const searchFilter = document.getElementById('userSearchFilter').value;
+            const filterAdmins = document.getElementById('adminOnlyFilter').checked;
+            const filterBanned = document.getElementById('bannedOnlyFilter').checked;
+            const filterOnline = document.getElementById('onlineOnlyFilter').checked;
+            const sortOrder = document.getElementById('userSortOrder').value;
+
+            // Filter users
+            filteredUsers = allUsersCache.filter(user => {
+                // Search filter
+                let matchesSearch = true;
+                if (searchInput) {
+                    if (searchFilter === 'all') {
+                        matchesSearch = 
+                            (user.username || '').toLowerCase().includes(searchInput) ||
+                            (user.email || '').toLowerCase().includes(searchInput) ||
+                            (user.isAdmin ? 'administrator' : 'member').includes(searchInput);
+                    } else if (searchFilter === 'username') {
+                        matchesSearch = (user.username || '').toLowerCase().includes(searchInput);
+                    } else if (searchFilter === 'email') {
+                        matchesSearch = (user.email || '').toLowerCase().includes(searchInput);
+                    } else if (searchFilter === 'role') {
+                        matchesSearch = (user.isAdmin ? 'administrator' : 'member').includes(searchInput);
+                    }
+                }
+
+                // Additional filters
+                const matchesAdmin = !filterAdmins || user.isAdmin;
+                const matchesBanned = !filterBanned || user.isBanned;
+                const matchesOnline = !filterOnline || user.isOnline;
+
+                return matchesSearch && matchesAdmin && matchesBanned && matchesOnline;
+            });
+
+            // Sort users
+            filteredUsers.sort((a, b) => {
+                const dateA = new Date(a.createdAt || 0);
+                const dateB = new Date(b.createdAt || 0);
+                return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+
+            // Display users
+            displayUsers();
+        }
+
+        // Display users with pagination
+        function displayUsers() {
+            const usersTableBody = document.getElementById('usersTableBody');
+            usersTableBody.innerHTML = '';
+
+            const startIdx = (userCurrentPage - 1) * usersPerPage;
+            const endIdx = startIdx + usersPerPage;
+            const usersToShow = filteredUsers.slice(startIdx, endIdx);
+
+            if (usersToShow.length === 0) {
+                usersTableBody.innerHTML = '<tr><td colspan="6">No users found</td></tr>';
+                return;
+            }
+
+            usersToShow.forEach(user => {
+                const row = document.createElement('tr');
+                row.id = `user-row-${user.id}`;
+                
+                const tenMinutesAgo = new Date();
+                tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+                const isOnlineLastActive = user.lastActive && new Date(user.lastActive) > tenMinutesAgo;
+                const isOnline = user.isOnline || isOnlineLastActive;
+
+                row.innerHTML = `
+                    <td class="truncated-text">${user.username || 'Anonymous'}</td>
+                    <td class="truncated-text">${user.email || 'N/A'}</td>
+                    <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
+                    <td>${user.isAdmin ? 'Administrator' : 'Member'}</td>
+                    <td>
+                        <span class="status-indicator ${isOnline ? 'online' : 'offline'}">
+                            ${isOnline ? 'Online' : 'Offline'}
+                        </span>
+                        ${user.isBanned ? '<span class="status-indicator banned">Banned</span>' : ''}
+                    </td>
+                    <td>
+                        <button onclick="viewUser('${user.id}')" class="btn btn-sm">View</button>
+                        ${user.isBanned ? 
+                            `<button onclick="unbanUser('${user.id}')" class="btn btn-sm btn-warning">Unban</button>` :
+                            `<button onclick="banUser('${user.id}')" class="btn btn-sm btn-danger">Ban</button>`
+                        }
+                        ${user.isAdmin ?
+                            `<button onclick="removeAdmin('${user.id}')" class="btn btn-sm btn-warning">Remove Admin</button>` :
+                            `<button onclick="makeAdmin('${user.id}')" class="btn btn-sm">Make Admin</button>`
+                        }
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+
+            // Add "Load More" button if there are more users
+            hasMoreUsers = endIdx < filteredUsers.length;
+            updateLoadMoreUsersButton();
+        }
+
+        // Add "Load More" button for users
+        function updateLoadMoreUsersButton() {
+            let loadMoreContainer = document.getElementById('loadMoreUsersContainer');
+            if (!loadMoreContainer) {
+                loadMoreContainer = document.createElement('div');
+                loadMoreContainer.id = 'loadMoreUsersContainer';
+                loadMoreContainer.style.textAlign = 'center';
+                loadMoreContainer.style.marginTop = '20px';
+                document.getElementById('usersTable').parentNode.appendChild(loadMoreContainer);
+            }
+
+            if (hasMoreUsers) {
+                loadMoreContainer.innerHTML = `
+                    <button id="loadMoreUsersBtn" class="btn" onclick="loadMoreUsers()">
+                        Load More Users
+                    </button>
+                    <div id="userLoadingIndicator" style="display: none;">Loading...</div>
+                `;
+            } else {
+                loadMoreContainer.innerHTML = '<div id="noMoreUsers">No more users to load</div>';
+            }
+        }
+
+        // Load more users
+        async function loadMoreUsers() {
+            if (isLoadingUsers || !hasMoreUsers) return;
+
+            isLoadingUsers = true;
+            document.getElementById('userLoadingIndicator').style.display = 'block';
+            document.getElementById('loadMoreUsersBtn').style.display = 'none';
+
+            try {
+                userCurrentPage++;
+                displayUsers();
+            } finally {
+                isLoadingUsers = false;
+                document.getElementById('userLoadingIndicator').style.display = 'none';
+                if (hasMoreUsers) {
+                    document.getElementById('loadMoreUsersBtn').style.display = 'block';
+                }
+            }
+        }
+
+        // Add event listeners for user management controls
+        document.addEventListener('DOMContentLoaded', function() {
+            // User search and filter controls
+            document.getElementById('userSearchBtn').addEventListener('click', () => applyUserFilters());
+            document.getElementById('userClearSearchBtn').addEventListener('click', () => {
+                document.getElementById('userSearchInput').value = '';
+                document.getElementById('userSearchFilter').value = 'all';
+                document.getElementById('adminOnlyFilter').checked = false;
+                document.getElementById('bannedOnlyFilter').checked = false;
+                document.getElementById('onlineOnlyFilter').checked = false;
+                document.getElementById('userSortOrder').value = 'newest';
+                applyUserFilters();
+            });
+
+            // Add input event listeners
+            document.getElementById('userSearchInput').addEventListener('input', () => applyUserFilters());
+            document.getElementById('userSearchFilter').addEventListener('change', () => applyUserFilters());
+            document.getElementById('adminOnlyFilter').addEventListener('change', () => applyUserFilters());
+            document.getElementById('bannedOnlyFilter').addEventListener('change', () => applyUserFilters());
+            document.getElementById('onlineOnlyFilter').addEventListener('change', () => applyUserFilters());
+            document.getElementById('userSortOrder').addEventListener('change', () => applyUserFilters());
+        });
+
+        // Post Management Functions
+        async function viewPost(postId) {
+            try {
+                console.log('Viewing post:', postId);
+                // Parse thread ID and reply index from the post ID
+                let threadId, replyIndex;
+                
+                // Check if this is a reply (has a number after the last dash)
+                const matches = postId.match(/^(.+?)-(\d+)$/);
+                if (matches) {
+                    threadId = matches[1];  // Everything up to the last dash
+                    replyIndex = parseInt(matches[2]);  // The number after the last dash
+                } else {
+                    threadId = postId;
+                    replyIndex = 0;
+                }
+                
+                console.log('Parsed post data:', {
+                    originalPostId: postId,
+                    threadId: threadId,
+                    replyIndex: replyIndex,
+                    isReply: !!matches
+                });
+                
+                const threadRef = ref(database, `threads/${threadId}`);
+                const snapshot = await get(threadRef);
+
+                if (!snapshot.exists()) {
+                    console.error('Thread not found:', threadId);
+                    alert('Thread not found');
+                    return;
+                }
+
+                const thread = snapshot.val();
+                console.log('Thread data:', {
+                    threadId: threadId,
+                    messageCount: thread.messages ? thread.messages.length : 0,
+                    hasMessages: !!thread.messages,
+                    requestedIndex: replyIndex
+                });
+
+                if (!thread.messages || !thread.messages[replyIndex]) {
+                    console.error('Post not found in thread:', {
+                        threadId: threadId,
+                        replyIndex: replyIndex,
+                        messageCount: thread.messages ? thread.messages.length : 0,
+                        messages: thread.messages
+                    });
+                    alert('Post not found in thread');
+                    return;
+                }
+
+                const post = thread.messages[replyIndex];
+                const postType = replyIndex === 0 ? 'Thread Starter' : `Reply #${replyIndex}`;
+                const formattedContent = `
+Type: ${postType}
+Thread: #${threadId}
+Author: ${post.username || 'Anonymous'}
+Date: ${new Date(post.timestamp).toLocaleString()}
+${post.subject ? `Subject: ${post.subject}\n` : ''}
+${post.image ? `Image: ${post.image}\n` : ''}
+
+Message:
+${post.message || ''}
+                `.trim();
+
+                alert(formattedContent);
+            } catch (error) {
+                console.error('Error viewing post:', error);
+                alert('Error viewing post: ' + error.message);
+            }
+        }
+
+        async function deletePost(postId) {
+            if (!isAdmin || !currentUser) {
+                console.log('Unauthorized action attempt');
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                console.log('Deleting post:', postId);
+                // Parse thread ID and reply index from the post ID
+                let threadId, replyIndex;
+                
+                // Check if this is a reply (has a number after the last dash)
+                const matches = postId.match(/^(.+?)-(\d+)$/);
+                if (matches) {
+                    threadId = matches[1];  // Everything up to the last dash
+                    replyIndex = parseInt(matches[2]);  // The number after the last dash
+                } else {
+                    threadId = postId;
+                    replyIndex = 0;
+                }
+                
+                console.log('Parsed post data:', {
+                    originalPostId: postId,
+                    threadId: threadId,
+                    replyIndex: replyIndex,
+                    isReply: !!matches
+                });
+
+                const threadRef = ref(database, `threads/${threadId}`);
+                const snapshot = await get(threadRef);
+
+                if (!snapshot.exists()) {
+                    console.error('Thread not found:', threadId);
+                    alert('Thread not found');
+                    return;
+                }
+
+                const thread = snapshot.val();
+                console.log('Thread data:', {
+                    threadId: threadId,
+                    messageCount: thread.messages ? thread.messages.length : 0,
+                    hasMessages: !!thread.messages,
+                    requestedIndex: replyIndex,
+                    messages: thread.messages
+                });
+
+                if (!thread.messages || !thread.messages[replyIndex]) {
+                    console.error('Post not found in thread:', {
+                        threadId: threadId,
+                        replyIndex: replyIndex,
+                        messageCount: thread.messages ? thread.messages.length : 0,
+                        messages: thread.messages
+                    });
+                    alert('Post not found in thread');
+                    return;
+                }
+
+                if (replyIndex === 0) {
+                    // Deleting the thread starter (entire thread)
+                    console.log('Deleting entire thread:', threadId);
+                    await remove(threadRef);
+                    alert('Thread deleted successfully');
+                } else {
+                    // Deleting a reply
+                    console.log('Deleting reply:', {
+                        threadId: threadId,
+                        replyIndex: replyIndex,
+                        messagesBefore: thread.messages.length
+                    });
+                    // Remove the reply from the messages array
+                    thread.messages.splice(replyIndex, 1);
+                    console.log('Messages after splice:', {
+                        messagesAfter: thread.messages.length,
+                        messages: thread.messages
+                    });
+                    
+                    // Update the thread with the remaining messages
+                    await set(threadRef, thread);
+                    alert('Reply deleted successfully');
+                }
+
+                // Refresh the posts display
+                loadPosts(true);
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Error deleting post: ' + error.message);
+            }
+        }
+
+        // Process and display posts
+        function processAndDisplayPosts(threads) {
+            if (!threads) return;
+            
+            // Clear existing cache if we're starting fresh
+            if (currentPage === 1) {
+                allPostsCache = [];
+                filteredPosts = [];
+            }
+            
+            // Process all threads and their messages
+            Object.entries(threads).forEach(([threadId, thread]) => {
+                if (!thread.messages) return;
+                
+                thread.messages.forEach((message, index) => {
+                    if (!message) return;
+                    
+                    const postNumber = index === 0 ? threadId : `${threadId}-${index}`;
+                    const postData = {
+                        ...message,
+                        threadId,
+                        postNumber,
+                        isOP: index === 0
+                    };
+                    
+                    // Add to all posts cache
+                    allPostsCache.push(postData);
+                    
+                    // Add to filtered posts if it matches current filters
+                    if (matchesFilters(postData)) {
+                        filteredPosts.push(postData);
+                    }
+                });
+            });
+            
+            // Sort posts based on current sort order
+            filteredPosts.sort((a, b) => {
+                const dateA = new Date(a.timestamp);
+                const dateB = new Date(b.timestamp);
+                return currentFilters.sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+            
+            // Display the current page
+            displayPosts(true);
+        }
+
+        // Display posts function
+        async function displayPosts(resetTable = false) {
+                const postsTableBody = document.getElementById('postsTableBody');
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const postsToDisplay = filteredPosts.slice(startIndex, endIndex);
+            
+            if (resetTable) {
+                postsTableBody.innerHTML = '';
+            }
+            
+            if (postsToDisplay.length === 0) {
+                if (currentPage === 1) {
+                    postsTableBody.innerHTML = '<tr><td colspan="5">No posts found</td></tr>';
+                }
+                hasMorePosts = false;
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('noMorePosts').style.display = 'block';
+                return;
+            }
+            
+            const fragment = document.createDocumentFragment();
+            postsToDisplay.forEach(post => {
+                const row = createPostRow(post);
+                fragment.appendChild(row);
+            });
+            
+            if (resetTable) {
+                postsTableBody.innerHTML = '';
+            }
+            postsTableBody.appendChild(fragment);
+            
+            // Update hasMorePosts flag
+            hasMorePosts = filteredPosts.length > endIndex;
+            
+            // Update loading indicators
+            document.getElementById('loadingIndicator').style.display = hasMorePosts ? 'block' : 'none';
+            document.getElementById('noMorePosts').style.display = hasMorePosts ? 'none' : 'block';
+        }
+
+        // Setup real-time updates
+        function setupRealTimeUpdates(threadsRef) {
+            // Clear any existing interval
+            if (queueInterval) {
+                clearInterval(queueInterval);
+            }
+
+            // Process queue periodically
+            queueInterval = setInterval(processUpdateQueue, QUEUE_PROCESS_INTERVAL);
+
+            // Listen only for new posts
+            const latestPostsQuery = query(
+                threadsRef,
+                orderByChild('timestamp'),
+                limitToLast(1)
+            );
+
+            // Handle new posts
+            onChildAdded(threadsRef, (snapshot) => {
+                const threadId = snapshot.key;
+                const threadData = snapshot.val();
+                
+                // Only queue if it's newer than our last processed update
+                if (threadData.timestamp > lastProcessedTimestamp) {
+                    queueUpdate('add', threadId, threadData);
+                }
+            });
+
+            // Handle updated posts
+            onChildChanged(threadsRef, (snapshot) => {
+                const threadId = snapshot.key;
+                const threadData = snapshot.val();
+                queueUpdate('update', threadId, threadData);
+            });
+
+            // Handle deleted posts
+            onChildRemoved(threadsRef, (snapshot) => {
+                const threadId = snapshot.key;
+                queueUpdate('delete', threadId, null);
+            });
+        }
+
+        // Queue an update
+        function queueUpdate(type, threadId, data) {
+            updateQueue.push({
+                type,
+                threadId,
+                data,
+                timestamp: Date.now()
+            });
+
+            // Update the UI to show pending updates
+            updatePendingIndicator();
+        }
+
+        // Process the update queue
+        async function processUpdateQueue() {
+            if (isProcessingQueue || updateQueue.length === 0) return;
+
+            isProcessingQueue = true;
+            const processBatchSize = 5; // Process 5 updates at a time
+            
+            try {
+                // Take the next batch of updates
+                const updates = updateQueue.splice(0, processBatchSize);
+                
+                // Group updates by type for efficient processing
+                const grouped = updates.reduce((acc, update) => {
+                    if (!acc[update.type]) acc[update.type] = [];
+                    acc[update.type].push(update);
+                    return acc;
+                }, {});
+
+                // Process each type of update
+                if (grouped.delete) {
+                    await processDeleteUpdates(grouped.delete);
+                }
+                if (grouped.update) {
+                    await processUpdateUpdates(grouped.update);
+                }
+                if (grouped.add) {
+                    await processAddUpdates(grouped.add);
+                }
+
+                // Update last processed timestamp
+                lastProcessedTimestamp = Math.max(...updates.map(u => u.timestamp));
+                
+                // Update the UI to show remaining updates
+                updatePendingIndicator();
+                
+                // If there are more updates, schedule another process
+                if (updateQueue.length > 0) {
+                    setTimeout(processUpdateQueue, 100);
+                }
+            } catch (error) {
+                console.error('Error processing update queue:', error);
+            } finally {
+                isProcessingQueue = false;
+            }
+        }
+
+        // Process delete updates
+        async function processDeleteUpdates(updates) {
+            const threadIds = updates.map(u => u.threadId);
+            
+            // Remove from cache
+            allPostsCache = allPostsCache.filter(post => !threadIds.includes(post.threadId));
+            filteredPosts = filteredPosts.filter(post => !threadIds.includes(post.threadId));
+            
+            // Remove from DOM if visible
+            threadIds.forEach(threadId => {
+                const elements = document.querySelectorAll(`[data-thread-id="${threadId}"]`);
+                elements.forEach(el => el.remove());
+            });
+        }
+
+        // Process update updates
+        async function processUpdateUpdates(updates) {
+            updates.forEach(update => {
+                const threadId = update.threadId;
+                const threadData = update.data;
+
+                // Update cache
+                allPostsCache = allPostsCache.filter(post => post.threadId !== threadId);
+                filteredPosts = filteredPosts.filter(post => post.threadId !== threadId);
+
+                if (threadData.messages) {
+                    threadData.messages.forEach((message, index) => {
+                        if (!message) return;
+                        
+                        const postNumber = index === 0 ? threadId : `${threadId}-${index}`;
+                        const postData = {
+                            ...message,
+                            threadId,
+                            postNumber,
+                            isOP: index === 0
+                        };
+
+                        allPostsCache.push(postData);
+                        
+                        // Only add to filtered posts if it matches current filters
+                        if (matchesFilters(postData)) {
+                            filteredPosts.push(postData);
+                        }
+                    });
+                }
+            });
+
+            // Update display if needed
+            if (currentPage === 1) {
+                applyFiltersAndSearch();
+            }
+        }
+
+        // Process add updates
+        async function processAddUpdates(updates) {
+            const fragment = document.createDocumentFragment();
+            let addedCount = 0;
+
+            updates.forEach(update => {
+                const threadId = update.threadId;
+                const threadData = update.data;
+
+                if (threadData.messages) {
+                    threadData.messages.forEach((message, index) => {
+                        if (!message) return;
+                        
+                        const postNumber = index === 0 ? threadId : `${threadId}-${index}`;
+                        const postData = {
+                            ...message,
+                            threadId,
+                            postNumber,
+                            isOP: index === 0
+                        };
+
+                        // Add to cache
+                        allPostsCache.push(postData);
+                        
+                        // Only process for display if it matches filters
+                        if (matchesFilters(postData)) {
+                            filteredPosts.push(postData);
+                            
+                            // Only add to DOM if we're on the first page
+                            if (currentPage === 1 && addedCount < postsPerPage) {
+                                const row = createPostRow(postData);
+                                fragment.insertBefore(row, fragment.firstChild);
+                                addedCount++;
+                            }
+                        }
+                    });
+                }
+            });
+
+            // Update DOM if needed
+            if (addedCount > 0 && currentPage === 1) {
+                const postsTableBody = document.getElementById('postsTableBody');
+                
+                // Remove excess rows if needed
+                while (postsTableBody.children.length >= postsPerPage) {
+                    postsTableBody.lastChild.remove();
+                }
+                
+                // Add new rows at the top
+                postsTableBody.insertBefore(fragment, postsTableBody.firstChild);
+            }
+        }
+
+        // Create a post row element
+        function createPostRow(post) {
+            const row = document.createElement('tr');
+            row.dataset.threadId = post.threadId;
+            row.dataset.postNumber = post.postNumber;
+            
+            // Truncate and sanitize message content
+            const maxLength = 30; // Show fewer characters
+            const truncatedContent = post.message ? 
+                (post.message.length > maxLength ? 
+                    post.message.substring(0, maxLength) + '...' : 
+                    post.message) : 
+                '';
+
+            // Truncate subject if it's too long
+            const subjectMaxLength = 25;
+            const truncatedSubject = post.subject ? 
+                (post.subject.length > subjectMaxLength ? 
+                    post.subject.substring(0, subjectMaxLength) + '...' : 
+                    post.subject) : 
+                '';
+            
+            // Format thread/post number without truncation
+            const postIdText = post.isOP ? `Thread #${post.threadId}` : `Reply #${post.postNumber}`;
+            
+            row.innerHTML = `
+                <td style="width: 120px;">
+                    <div class="post-id">${postIdText}</div>
+                    ${truncatedSubject ? `<div class="post-subject truncated-text" title="${post.subject}">${truncatedSubject}</div>` : ''}
+                </td>
+                <td style="width: 100px;">${post.username || 'Anonymous'}</td>
+                <td class="post-content">
+                    ${post.image ? `<img src="${post.image}" alt="Post image" style="max-width: 50px; max-height: 50px;"><br>` : ''}
+                    <div class="truncated-text">${truncatedContent}</div>
+                </td>
+                <td style="width: 150px;">${new Date(post.timestamp).toLocaleString()}</td>
+                <td style="width: 120px;">
+                    <button class="btn" onclick="handleViewPost('${post.postNumber}')">View</button>
+                    <button class="btn btn-danger" onclick="handleDeletePost('${post.postNumber}')">Delete</button>
+                </td>
+            `;
+            
+            return row;
+        }
+
+        // Check if a post matches current filters
+        function matchesFilters(post) {
+            // Check search query
+            if (currentSearchQuery) {
+                const matches = (() => {
+                    switch (currentSearchFilter) {
+                        case 'content':
+                            return post.message?.toLowerCase().includes(currentSearchQuery);
+                        case 'author':
+                            return post.username?.toLowerCase().includes(currentSearchQuery);
+                        case 'subject':
+                            return post.subject?.toLowerCase().includes(currentSearchQuery);
+                        case 'id':
+                            return post.postNumber.toLowerCase().includes(currentSearchQuery);
+                        case 'all':
+                            return (
+                                post.message?.toLowerCase().includes(currentSearchQuery) ||
+                                post.username?.toLowerCase().includes(currentSearchQuery) ||
+                                post.subject?.toLowerCase().includes(currentSearchQuery) ||
+                                post.postNumber.toLowerCase().includes(currentSearchQuery)
+                            );
+                        default:
+                            return true;
+                    }
+                })();
+                if (!matches) return false;
+            }
+
+            // Check other filters
+            if (currentFilters.threadsOnly && !post.isOP) return false;
+            if (currentFilters.imagesOnly && !post.image) return false;
+
+            return true;
+        }
+
+        // Update the pending updates indicator
+        function updatePendingIndicator() {
+            const indicator = document.getElementById('pendingUpdates');
+            if (!indicator) return;
+
+            if (updateQueue.length > 0) {
+                indicator.textContent = `${updateQueue.length} pending update${updateQueue.length === 1 ? '' : 's'}`;
+                indicator.style.display = 'block';
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+
+        // Load more posts
+        async function loadMorePosts() {
+            if (isLoading || !hasMorePosts) return;
+
+            isLoading = true;
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('noMorePosts').style.display = 'none';
+
+            try {
+                currentPage++;
+                await displayPosts(false);
+            } finally {
+                isLoading = false;
+                document.getElementById('loadingIndicator').style.display = 'none';
+            }
+        }
+        
+        // Load system settings
+        async function loadSystemSettings() {
+            const settingsRef = ref(database, 'settings');
+            const settingsSnapshot = await get(settingsRef);
+            
+            if (settingsSnapshot.exists()) {
+                const settings = settingsSnapshot.val();
+                document.getElementById('siteName').value = settings.siteName || '05chan';
+                document.getElementById('siteDescription').value = settings.siteDescription || 'An anonymous imageboard platform.';
+            }
+        }
+        
+        // Save system settings
+        async function saveSystemSettings() {
+            try {
+                const siteName = document.getElementById('siteName').value;
+                const siteDescription = document.getElementById('siteDescription').value;
+                
+                const settingsRef = ref(database, 'settings');
+                await set(settingsRef, {
+                    siteName,
+                    siteDescription,
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: currentUser.uid
+                });
+                
+                alert('Settings saved successfully');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Error saving settings: ' + error.message);
+            }
+        }
+        
+        // View user
+        window.viewUser = function(userId) {
+            window.location.href = getBaseUrl() + '/users.html?userId=' + userId;
+        };
+        
+        // Ban user
+        window.banUser = async function(userId) {
+            if (!await verifyAdminStatus()) {
+                console.log('Unauthorized action attempt');
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+            if (confirm('Are you sure you want to ban this user? This action cannot be undone.')) {
+                try {
+                    const userRef = ref(database, `users/${userId}`);
+                    const snapshot = await get(userRef);
+                    const userData = snapshot.val();
+                    
+                    if (userData) {
+                        // Update user data to indicate banned status
+                        await set(userRef, {
+                            ...userData,
+                            isBanned: true,
+                            bannedAt: new Date().toISOString(),
+                            bannedBy: currentUser.uid
+                        });
+                        
+                        alert('User banned successfully');
+                        await loadUsers(); // Refresh user list
+                    } else {
+                        alert('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error banning user:', error);
+                    alert('Error banning user: ' + error.message);
+                }
+            }
+        };
+        
+        // New function: Unban a user
+        window.unbanUser = async function(userId) {
+            if (!await verifyAdminStatus()) {
+                console.log('Unauthorized action attempt');
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+            if (confirm('Are you sure you want to unban this user?')) {
+                try {
+                    const userRef = ref(database, `users/${userId}`);
+                    const snapshot = await get(userRef);
+                    const userData = snapshot.val();
+                    
+                    if (userData) {
+                        // Create a new user object without the banned properties
+                        const { isBanned, bannedAt, bannedBy, ...unbannedUser } = userData;
+                        
+                        // Update user data to remove banned status
+                        await set(userRef, {
+                            ...unbannedUser,
+                            unbannedAt: new Date().toISOString(),
+                            unbannedBy: currentUser.uid
+                        });
+                        
+                        alert('User unbanned successfully');
+                    } else {
+                        alert('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error unbanning user:', error);
+                    alert('Error unbanning user: ' + error.message);
+                }
+            }
+        };
+        
+        // New function: Make a user an admin
+        window.makeAdmin = async function(userId) {
+            if (!await verifyAdminStatus()) {
+                console.log('Unauthorized action attempt');
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+            if (confirm('Are you sure you want to make this user an administrator?')) {
+                try {
+                    const userRef = ref(database, `users/${userId}`);
+                    const snapshot = await get(userRef);
+                    const userData = snapshot.val();
+                    
+                    if (userData) {
+                        // Update user data to give admin status
+                        await set(userRef, {
+                            ...userData,
+                            isAdmin: true,
+                            adminSince: new Date().toISOString(),
+                            adminBy: currentUser.uid
+                        });
+                        
+                        alert('User is now an administrator');
+                    } else {
+                        alert('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error making user admin:', error);
+                    alert('Error making user admin: ' + error.message);
+                }
+            }
+        };
+        
+        // New function: Remove admin privileges
+        window.removeAdmin = async function(userId) {
+            if (!await verifyAdminStatus()) {
+                console.log('Unauthorized action attempt');
+                window.location.href = getBaseUrl() + '/';
+                return;
+            }
+            if (confirm('Are you sure you want to remove administrator privileges from this user?')) {
+                try {
+                    const userRef = ref(database, `users/${userId}`);
+                    const snapshot = await get(userRef);
+                    const userData = snapshot.val();
+                    
+                    if (userData) {
+                        // Create a new user object without the admin properties
+                        const { isAdmin, adminSince, adminBy, ...regularUser } = userData;
+                        
+                        // Update user data to remove admin status
+                        await set(userRef, {
+                            ...regularUser,
+                            adminRemovedAt: new Date().toISOString(),
+                            adminRemovedBy: currentUser.uid
+                        });
+                        
+                        alert('Administrator privileges removed');
+                    } else {
+                        alert('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error removing admin privileges:', error);
+                    alert('Error removing admin privileges: ' + error.message);
+                }
+            }
+        };
+        
+        // URL handling
+        function getBaseUrl() {
+            const isGitHubPages = window.location.hostname.includes('github.io');
+            
+            if (isGitHubPages) {
+                // Extract repo name from the path
+                const pathParts = window.location.pathname.split('/').filter(Boolean);
+                const repoName = pathParts[0]; // The repo name is the first non-empty part
+                return `/${repoName}`;
+            }
+            return ''; // Local development
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load theme
+            loadTheme();
+            
+            // Update header links
+            document.querySelector('.board-header .title a').href = getBaseUrl() + '/';
+            
+            // Set up button event listeners
+            document.getElementById('backBtn').addEventListener('click', function() {
+                window.location.href = getBaseUrl() + '/';
+            });
+            
+            document.getElementById('refreshBtn').addEventListener('click', debouncedRefresh);
+            document.getElementById('refreshUsersBtn').addEventListener('click', loadUsers);
+            document.getElementById('refreshPostsBtn').addEventListener('click', debouncedRefresh);
+            document.getElementById('saveSettingsBtn').addEventListener('click', saveSystemSettings);
+            document.getElementById('clearCacheBtn').addEventListener('click', clearCache);
+            
+            // Logout handler
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                try {
+                    await signOut(auth);
+                    window.location.href = getBaseUrl() + '/';
+                } catch (error) {
+                    alert('Failed to logout: ' + error.message);
+                }
+            });
+            
+            // Auth will automatically check and show the admin panel or redirect
+            // No need to hide the loading overlay here as it's done after admin verification
+            
+            // Initialize search and filters
+            initializeSearchAndFilters();
+        });
+        
+        // Clear cache function
+        async function clearCache() {
+            try {
+                const cacheKeys = [
+                    'theme',
+                    'lastVisit',
+                    'viewedPosts'
+                ];
+                
+                // Clear localStorage items
+                for (const key of cacheKeys) {
+                    localStorage.removeItem(key);
+                }
+                
+                // Clear any site-specific cache in Firebase
+                const cacheRef = ref(database, 'cache');
+                await remove(cacheRef);
+                
+                alert('Cache cleared successfully');
+            } catch (error) {
+                console.error('Error clearing cache:', error);
+                alert('Error clearing cache: ' + error.message);
+            }
+        }
+        
+        // Function to ensure loading overlay is removed
+        function hideLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+        
+        // Add security check to all admin functions
+        async function verifyAdminStatus() {
+            if (!currentUser) return false;
+            
+            const userRef = ref(database, `users/${currentUser.uid}`);
+            const snapshot = await get(userRef);
+            const userData = snapshot.val();
+            
+            return userData && userData.isAdmin;
+        }
+
+        // Make functions available globally
+        window.handleViewPost = (postId) => viewPost(postId);
+        window.handleDeletePost = (postId) => deletePost(postId);
+        window.loadMorePosts = loadMorePosts;
+        window.viewUser = viewUser;
+        window.banUser = banUser;
+        window.unbanUser = unbanUser;
+        window.makeAdmin = makeAdmin;
+        window.removeAdmin = removeAdmin;
+        window.getBaseUrl = getBaseUrl;
+
+        // Add debounced refresh function
+        let refreshTimeout;
+        function debouncedRefresh() {
+            if (refreshTimeout) {
+                clearTimeout(refreshTimeout);
+            }
+            refreshTimeout = setTimeout(() => {
+                loadPosts(true);
+            }, 500);
+        }
+
+        // Initialize search and filters
+        function initializeSearchAndFilters() {
+            // Search input handler
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const searchFilter = document.getElementById('searchFilter');
+            
+            // Filters
+            const filterThreads = document.getElementById('filterThreads');
+            const filterImages = document.getElementById('filterImages');
+            const sortOrder = document.getElementById('sortOrder');
+
+            // Search handlers
+            searchBtn.addEventListener('click', () => {
+                currentSearchQuery = searchInput.value.trim().toLowerCase();
+                currentSearchFilter = searchFilter.value;
+                currentPage = 1;
+                applyFiltersAndSearch();
+            });
+
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchFilter.value = 'all';
+                currentSearchQuery = '';
+                currentSearchFilter = 'all';
+                currentPage = 1;
+                applyFiltersAndSearch();
+            });
+
+            // Filter handlers
+            filterThreads.addEventListener('change', () => {
+                currentFilters.threadsOnly = filterThreads.checked;
+                currentPage = 1;
+                applyFiltersAndSearch();
+            });
+
+            filterImages.addEventListener('change', () => {
+                currentFilters.imagesOnly = filterImages.checked;
+                currentPage = 1;
+                applyFiltersAndSearch();
+            });
+
+            sortOrder.addEventListener('change', () => {
+                currentFilters.sortOrder = sortOrder.value;
+                currentPage = 1;
+                applyFiltersAndSearch();
+            });
+
+            // Initialize infinite scroll
+            initializeInfiniteScroll();
+        }
+
+        // Apply filters and search
+        function applyFiltersAndSearch() {
+            filteredPosts = [...allPostsCache];
+
+            // Apply search
+            if (currentSearchQuery) {
+                filteredPosts = filteredPosts.filter(post => {
+                    switch (currentSearchFilter) {
+                        case 'content':
+                            return post.message?.toLowerCase().includes(currentSearchQuery);
+                        case 'author':
+                            return post.username?.toLowerCase().includes(currentSearchQuery);
+                        case 'subject':
+                            return post.subject?.toLowerCase().includes(currentSearchQuery);
+                        case 'id':
+                            return post.postNumber.toLowerCase().includes(currentSearchQuery);
+                        case 'all':
+                            return (
+                                post.message?.toLowerCase().includes(currentSearchQuery) ||
+                                post.username?.toLowerCase().includes(currentSearchQuery) ||
+                                post.subject?.toLowerCase().includes(currentSearchQuery) ||
+                                post.postNumber.toLowerCase().includes(currentSearchQuery)
+                            );
+                        default:
+                            return true;
+                    }
+                });
+            }
+
+            // Apply filters
+            if (currentFilters.threadsOnly) {
+                filteredPosts = filteredPosts.filter(post => post.isOP);
+            }
+            if (currentFilters.imagesOnly) {
+                filteredPosts = filteredPosts.filter(post => post.image);
+            }
+
+            // Apply sorting
+            filteredPosts.sort((a, b) => {
+                const dateA = new Date(a.timestamp);
+                const dateB = new Date(b.timestamp);
+                return currentFilters.sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+
+            // Reset pagination and display
+            hasMorePosts = true;
+            displayPosts(true);
+        }
+
+        // Initialize infinite scroll
+        function initializeInfiniteScroll() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const noMorePosts = document.getElementById('noMorePosts');
+            
+            // Use Intersection Observer for infinite scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !isLoading && hasMorePosts) {
+                        loadMorePosts();
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(loadingIndicator);
+        }
+
+        // Image modal functions
+        function showImageModal(imageUrl) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = imageUrl;
+            modal.classList.add('visible');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('visible');
+        }
+
+        // Make image modal functions available globally
+        window.showImageModal = showImageModal;
+        window.closeImageModal = closeImageModal;
+    </script>
+</body>
+</html> 
